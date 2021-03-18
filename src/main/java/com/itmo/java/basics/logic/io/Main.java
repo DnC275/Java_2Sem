@@ -13,14 +13,20 @@ class Main {
     public static void main(String[] args) throws DatabaseException {
         Database db = DatabaseImpl.create("DatabaseTest", Paths.get("/home/denis/TechProg/Lab1"));
         db.createTableIfNotExists("123");
-        db.write("123", "1", null);
-        db.createTableIfNotExists("456");
-        db.write("456", "1", "5".getBytes(StandardCharsets.UTF_8));
-        byte[] v = new byte[0];
-        db.write("123", "1", null);
-        Optional<byte[]> b = db.read("123","1");
-        db.delete("123", "1");
-        Optional<byte[]> c = db.read("167","1");
+        byte[] value = {1, 2, 3};
+        db.write("123", "12", value);
+        Optional<byte[]> checkValue = db.read("123", "12");
+        for (byte i :
+                checkValue.get()) {
+            System.out.println(i);
+        }
+//        db.createTableIfNotExists("456");
+//        db.write("456", "1", "5".getBytes(StandardCharsets.UTF_8));
+//        byte[] v = new byte[0];
+//        db.write("123", "1", null);
+//        Optional<byte[]> b = db.read("123","1");
+//        db.delete("123", "1");
+//        Optional<byte[]> c = db.read("167","1");
     }
 
 }

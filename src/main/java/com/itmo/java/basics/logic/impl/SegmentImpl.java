@@ -62,7 +62,9 @@ public class SegmentImpl implements Segment {
             return delete(objectKey);
         }
         SetDatabaseRecord setDatabaseRecord = new SetDatabaseRecord(objectKey.getBytes(StandardCharsets.UTF_8), objectValue);
-        return writeToFile(setDatabaseRecord);
+        long offset = writeToFile(setDatabaseRecord);
+        index.onIndexedEntityUpdated(objectKey, new SegmentOffsetInfoImpl(offset));
+        return true;
     }
 
     @Override
@@ -86,19 +88,20 @@ public class SegmentImpl implements Segment {
     @Override
     public boolean delete(String objectKey) throws IOException {
         RemoveDatabaseRecord removeDatabaseRecord = new RemoveDatabaseRecord(objectKey.getBytes(StandardCharsets.UTF_8));
-        return writeToFile(removeDatabaseRecord);
+        long offset = writeToFile(removeDatabaseRecord);
+        index.onIndexedEntityUpdated(objectKey, new SegmentOffsetInfoImpl(offset));
+        return true;
     }
 
-    private boolean writeToFile(WritableDatabaseRecord databaseRecord) throws IOException{
-        DatabaseOutputStream outputStream = new DatabaseOutputStream(new FileOutputStream(path.toString()));
+    private long writeToFile(WritableDatabaseRecord databaseRecord) throws IOException{
+        DatabaseOutputStream outputStream = new DatabaseOutputStream(new FileOutputStream(path.toString(), true));
         File file = new File(path.toString());
         long offset = file.length();
         outputStream.write(databaseRecord);
-        index.onIndexedEntityUpdated(databaseRecord.getKey(), new SegmentOffsetInfoImpl(offset));
         if (file.length() >= 100000){
             readOnly = true;
         }
         outputStream.close();
-        return true;
+        return offset;
     }
 }
