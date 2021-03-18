@@ -1,0 +1,26 @@
+package com.itmo.java.basics.logic.io;
+
+import com.itmo.java.basics.exceptions.DatabaseException;
+import com.itmo.java.basics.logic.Database;
+import com.itmo.java.basics.logic.impl.DatabaseImpl;
+
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Optional;
+
+class Main {
+    public static void main(String[] args) throws DatabaseException {
+        Database db = DatabaseImpl.create("DatabaseTest", Paths.get("/home/denis/TechProg/Lab1"));
+        db.createTableIfNotExists("123");
+        db.write("123", "1", null);
+        db.createTableIfNotExists("456");
+        db.write("456", "1", "5".getBytes(StandardCharsets.UTF_8));
+        byte[] v = new byte[0];
+        db.write("123", "1", null);
+        Optional<byte[]> b = db.read("123","1");
+        db.delete("123", "1");
+        Optional<byte[]> c = db.read("167","1");
+    }
+
+}

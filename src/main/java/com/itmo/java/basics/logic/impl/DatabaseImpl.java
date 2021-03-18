@@ -1,38 +1,81 @@
 package com.itmo.java.basics.logic.impl;
 
 import com.itmo.java.basics.exceptions.DatabaseException;
+import com.itmo.java.basics.index.impl.TableIndex;
 import com.itmo.java.basics.logic.Database;
+import com.itmo.java.basics.logic.Table;
 
+import javax.xml.crypto.Data;
+import java.io.File;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 public class DatabaseImpl implements Database {
+    String name;
+    Path path;
+    Map<String, Table> tableMap;
+
+    private DatabaseImpl(String name, Path path, Map<String, Table> tableMap){
+        this.name = name;
+        this.path = path;
+        this.tableMap = tableMap;
+    }
+
     public static Database create(String dbName, Path databaseRoot) throws DatabaseException {
-        return null;
+        if (!(new File(databaseRoot.toString())).exists()){
+            throw new DatabaseException("The specified databaseRoot path does not exist");
+        }
+        Path fullPath = FileSystems.getDefault().getPath(databaseRoot.toString(), dbName);
+        File file = new File(fullPath.toString());
+        if (!file.exists()){
+            file.mkdir();
+        }
+        return new DatabaseImpl(dbName, fullPath, new HashMap<String, Table>());
     }
 
     @Override
     public String getName() {
-        return null;
+        return name;
     }
 
     @Override
     public void createTableIfNotExists(String tableName) throws DatabaseException {
-
+        if (!tableMap.containsKey(tableName)){
+            Table newTable = TableImpl.create(tableName, path, new TableIndex());
+            tableMap.put(tableName, newTable);
+        }
     }
 
     @Override
     public void write(String tableName, String objectKey, byte[] objectValue) throws DatabaseException {
-
+        if (checkTableExistence(tableName)) {
+            tableMap.get(tableName).write(objectKey, objectValue);
+        }
     }
 
     @Override
     public Optional<byte[]> read(String tableName, String objectKey) throws DatabaseException {
+        if (checkTableExistence(tableName)) {
+            return tableMap.get(tableName).read(objectKey);
+        }
         return Optional.empty();
     }
 
     @Override
     public void delete(String tableName, String objectKey) throws DatabaseException {
+        if (checkTableExistence(tableName)){
+            tableMap.get(tableName).delete(objectKey);
+        }
+    }
 
+    private boolean checkTableExistence(String tableName) throws DatabaseException {
+        if (!tableMap.containsKey(tableName)){
+            throw new DatabaseException("There is no table with this name");
+        }
+        return true;
     }
 }
