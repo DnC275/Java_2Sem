@@ -77,7 +77,7 @@ public class SegmentImpl implements Segment {
         inputStream.skip(offsetInfo.get().getOffset());
         Optional<DatabaseRecord> dbRecord = inputStream.readDbUnit();
         inputStream.close();
-        return Optional.of(dbRecord.get().getValue());
+        return dbRecord.isEmpty() ? Optional.empty() : Optional.of(dbRecord.get().getValue());
     }
 
     @Override
