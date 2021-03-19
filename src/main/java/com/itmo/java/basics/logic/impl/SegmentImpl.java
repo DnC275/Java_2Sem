@@ -98,10 +98,10 @@ public class SegmentImpl implements Segment {
         File file = new File(path.toString());
         long offset = file.length();
         outputStream.write(databaseRecord);
+        outputStream.close();
         if (file.length() >= 100000){
             readOnly = true;
         }
-        outputStream.close();
         return offset;
     }
 }
