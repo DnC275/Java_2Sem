@@ -48,6 +48,9 @@ public class DatabaseImpl implements Database {
             Table newTable = TableImpl.create(tableName, path, new TableIndex());
             tableMap.put(tableName, newTable);
         }
+        else{
+            throw new DatabaseException("Table with such name already exists");
+        }
     }
 
     @Override
