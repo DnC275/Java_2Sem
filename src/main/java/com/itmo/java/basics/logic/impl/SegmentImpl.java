@@ -12,20 +12,15 @@ import com.itmo.java.basics.logic.io.DatabaseInputStream;
 import com.itmo.java.basics.logic.io.DatabaseOutputStream;
 
 import java.io.*;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.Optional;
 
 public class SegmentImpl implements Segment {
     private String name;
     private Path path;
     private KvsIndex index;
-    //private SegmentIndex index;
     private boolean readOnly = false;
 
     private SegmentImpl(String name, Path path, SegmentIndex index) {
@@ -39,12 +34,10 @@ public class SegmentImpl implements Segment {
             Path fullPath = FileSystems.getDefault().getPath(tableRootPath.toString(), segmentName);
             File file = new File(fullPath.toString());
             file.createNewFile();
-            //Files.createFile(Paths.get(tableRootPath.toString() + '/' + segmentName));
             return new SegmentImpl(segmentName, fullPath, new SegmentIndex());
         } catch (IOException ex) {
             throw new DatabaseException(ex);
         }
-        //TODO throw new UnsupportedOperationException(); // todo implement
     }
 
     static String createSegmentName(String tableName) {
@@ -76,11 +69,15 @@ public class SegmentImpl implements Segment {
         if (offsetInfo.isEmpty()){
             return Optional.empty();
         }
-        DatabaseInputStream inputStream = new DatabaseInputStream(new FileInputStream(path.toString()));
-        inputStream.skip(offsetInfo.get().getOffset());
-        Optional<DatabaseRecord> dbRecord = inputStream.readDbUnit();
-        inputStream.close();
-        return dbRecord.isEmpty() ? Optional.empty() : Optional.of(dbRecord.get().getValue());
+        try (DatabaseInputStream inputStream = new DatabaseInputStream(new FileInputStream(path.toString()))) {
+            inputStream.skip(offsetInfo.get().getOffset());
+            Optional<DatabaseRecord> dbRecord = inputStream.readDbUnit();
+            inputStream.close();
+            return dbRecord.isEmpty() ? Optional.empty() : Optional.of(dbRecord.get().getValue());
+        }
+        catch (IOException ex){
+            throw new IOException(String.format("IO exception when reading value by key \"%s\" from file by path \"%s\"", objectKey, path), ex);
+        }
     }
 
     @Override
@@ -97,14 +94,19 @@ public class SegmentImpl implements Segment {
     }
 
     private long writeToFile(WritableDatabaseRecord databaseRecord) throws IOException{
-        DatabaseOutputStream outputStream = new DatabaseOutputStream(new FileOutputStream(path.toString(), true));
-        File file = new File(path.toString());
-        long offset = file.length();
-        outputStream.write(databaseRecord);
-        outputStream.close();
-        if (file.length() >= 100000){
-            readOnly = true;
+        try (DatabaseOutputStream outputStream = new DatabaseOutputStream(new FileOutputStream(path.toString(), true))) {
+            File file = new File(path.toString());
+            long offset = file.length();
+            outputStream.write(databaseRecord);
+            outputStream.close();
+            if(file.length()>=100000)
+            {
+                readOnly = true;
+            }
+            return offset;
         }
-        return offset;
+        catch (IOException ex){
+            throw new IOException(String.format("IO exception when writing to file by path \"%s\"", path), ex);
+        }
     }
 }

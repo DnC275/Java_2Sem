@@ -5,9 +5,7 @@ import com.itmo.java.basics.index.impl.TableIndex;
 import com.itmo.java.basics.logic.Database;
 import com.itmo.java.basics.logic.Table;
 
-import javax.xml.crypto.Data;
 import java.io.File;
-import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -27,12 +25,12 @@ public class DatabaseImpl implements Database {
 
     public static Database create(String dbName, Path databaseRoot) throws DatabaseException {
         if (!(new File(databaseRoot.toString())).exists()){
-            throw new DatabaseException("The specified databaseRoot path does not exist");
+            throw new DatabaseException(String.format("Failed to create a database by path \"%s\"", databaseRoot));
         }
         Path fullPath = FileSystems.getDefault().getPath(databaseRoot.toString(), dbName);
         File file = new File(fullPath.toString());
-        if (!file.exists()){
-            file.mkdir();
+        if (!file.mkdir()){
+            throw new DatabaseException(String.format("Failed to create a database by path \"%s\"", databaseRoot));
         }
         return new DatabaseImpl(dbName, fullPath, new HashMap<String, Table>());
     }
@@ -49,7 +47,7 @@ public class DatabaseImpl implements Database {
             tableMap.put(tableName, newTable);
         }
         else{
-            throw new DatabaseException("Table with such name already exists");
+            throw new DatabaseException(String.format("Table with name \"%s\" already exists", tableName));
         }
     }
 
@@ -77,7 +75,7 @@ public class DatabaseImpl implements Database {
 
     private boolean checkTableExistence(String tableName) throws DatabaseException {
         if (!tableMap.containsKey(tableName)){
-            throw new DatabaseException("There is no table with this name");
+            throw new DatabaseException(String.format("There is no table with name \"%s\"", tableName));
         }
         return true;
     }

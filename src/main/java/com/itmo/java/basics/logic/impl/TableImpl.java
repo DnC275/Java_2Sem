@@ -1,7 +1,6 @@
 package com.itmo.java.basics.logic.impl;
 
 import com.itmo.java.basics.exceptions.DatabaseException;
-import com.itmo.java.basics.index.KvsIndex;
 import com.itmo.java.basics.index.impl.TableIndex;
 import com.itmo.java.basics.logic.Segment;
 import com.itmo.java.basics.logic.Table;
@@ -15,7 +14,6 @@ import java.util.Optional;
 public class TableImpl implements Table {
     String name;
     Path path;
-//    KvsIndex index;
     TableIndex index;
     Segment actualSegment = null;
 
@@ -27,12 +25,14 @@ public class TableImpl implements Table {
 
     static Table create(String tableName, Path pathToDatabaseRoot, TableIndex tableIndex) throws DatabaseException {
         if (!(new File(pathToDatabaseRoot.toString())).exists()){
-            throw new DatabaseException("The specified database path does not exist");
+            throw new DatabaseException(String.format("Failed to create a table by path \"%s\"", pathToDatabaseRoot));
         }
         Path fullPath = FileSystems.getDefault().getPath(pathToDatabaseRoot.toString(), tableName);
         File file = new File(fullPath.toString());
-        file.mkdir();
-        return new TableImpl(tableName, fullPath, new TableIndex());
+        if (!file.mkdir()){
+            throw new DatabaseException(String.format("Failed to create a table by path \"%s\"", pathToDatabaseRoot));
+        }
+        return new TableImpl(tableName, fullPath, tableIndex);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class TableImpl implements Table {
             actualSegment.write(objectKey, objectValue);
             index.onIndexedEntityUpdated(objectKey, actualSegment);
         } catch (IOException ex){
-            throw new DatabaseException(ex);
+            throw new DatabaseException(String.format("IO exception when writing to table \"%s\" by path \"%s\"", name, path), ex);
         }
     }
 
@@ -60,7 +60,7 @@ public class TableImpl implements Table {
                 Optional<byte[]> objectValue = index.searchForKey(objectKey).get().read(objectKey);
                 return objectValue;
             } catch (IOException ex){
-                throw new DatabaseException(ex);
+                throw new DatabaseException(String.format("IO exception when reading from table \"%s\" by path \"%s\"", name, path), ex);
             }
         }
         return Optional.empty();
@@ -75,7 +75,7 @@ public class TableImpl implements Table {
             actualSegment.delete(objectKey);
             index.onIndexedEntityUpdated(objectKey, actualSegment);
         } catch (IOException ex){
-            throw new DatabaseException(ex);
+            throw new DatabaseException(String.format("IO exception when writing to table \"%s\" by path \"%s\"", name, path), ex);
         }
     }
 }
