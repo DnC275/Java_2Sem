@@ -12,10 +12,10 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 public class TableImpl implements Table {
-    String name;
-    Path path;
-    TableIndex index;
-    Segment actualSegment = null;
+    private String name;
+    private Path path;
+    private TableIndex index;
+    private Segment actualSegment = null;
 
     private TableImpl(String name, Path path, TableIndex index){
         this.name = name;
@@ -57,8 +57,7 @@ public class TableImpl implements Table {
     public Optional<byte[]> read(String objectKey) throws DatabaseException {
         if (index.searchForKey(objectKey).isPresent()){
             try{
-                Optional<byte[]> objectValue = index.searchForKey(objectKey).get().read(objectKey);
-                return objectValue;
+                return index.searchForKey(objectKey).get().read(objectKey);
             } catch (IOException ex){
                 throw new DatabaseException(String.format("IO exception when reading from table \"%s\" by path \"%s\"", name, path), ex);
             }

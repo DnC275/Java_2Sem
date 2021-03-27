@@ -33,10 +33,12 @@ public class SegmentImpl implements Segment {
         try{
             Path fullPath = FileSystems.getDefault().getPath(tableRootPath.toString(), segmentName);
             File file = new File(fullPath.toString());
-            file.createNewFile();
+            if (!file.createNewFile()){
+                throw new IOException();
+            }
             return new SegmentImpl(segmentName, fullPath, new SegmentIndex());
         } catch (IOException ex) {
-            throw new DatabaseException(ex);
+            throw new DatabaseException(String.format("Failed to create a segment by path \"%s\"", tableRootPath), ex);
         }
     }
 
@@ -73,7 +75,7 @@ public class SegmentImpl implements Segment {
             inputStream.skip(offsetInfo.get().getOffset());
             Optional<DatabaseRecord> dbRecord = inputStream.readDbUnit();
             inputStream.close();
-            return dbRecord.isEmpty() ? Optional.empty() : Optional.of(dbRecord.get().getValue());
+            return dbRecord.map(record -> record.getValue());
         }
         catch (IOException ex){
             throw new IOException(String.format("IO exception when reading value by key \"%s\" from file by path \"%s\"", objectKey, path), ex);
@@ -99,7 +101,7 @@ public class SegmentImpl implements Segment {
             long offset = file.length();
             outputStream.write(databaseRecord);
             outputStream.close();
-            if(file.length()>=100000)
+            if(file.length() >= 100000)
             {
                 readOnly = true;
             }

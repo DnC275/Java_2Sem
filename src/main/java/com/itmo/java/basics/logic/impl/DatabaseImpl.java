@@ -13,14 +13,14 @@ import java.util.Map;
 import java.util.Optional;
 
 public class DatabaseImpl implements Database {
-    String name;
-    Path path;
-    Map<String, Table> tableMap;
+    private String name;
+    private Path path;
+    private Map<String, Table> tableMap;
 
-    private DatabaseImpl(String name, Path path, Map<String, Table> tableMap){
+    private DatabaseImpl(String name, Path path){
         this.name = name;
         this.path = path;
-        this.tableMap = tableMap;
+        this.tableMap = new HashMap<String, Table>();
     }
 
     public static Database create(String dbName, Path databaseRoot) throws DatabaseException {
@@ -32,7 +32,7 @@ public class DatabaseImpl implements Database {
         if (!file.mkdir()){
             throw new DatabaseException(String.format("Failed to create a database by path \"%s\"", databaseRoot));
         }
-        return new DatabaseImpl(dbName, fullPath, new HashMap<String, Table>());
+        return new DatabaseImpl(dbName, fullPath);
     }
 
     @Override
@@ -42,13 +42,10 @@ public class DatabaseImpl implements Database {
 
     @Override
     public void createTableIfNotExists(String tableName) throws DatabaseException {
-        if (!tableMap.containsKey(tableName)){
-            Table newTable = TableImpl.create(tableName, path, new TableIndex());
-            tableMap.put(tableName, newTable);
-        }
-        else{
+        if (tableMap.containsKey(tableName)){
             throw new DatabaseException(String.format("Table with name \"%s\" already exists", tableName));
         }
+        tableMap.put(tableName, TableImpl.create(tableName, path, new TableIndex()));
     }
 
     @Override

@@ -19,13 +19,17 @@ class Main {
         if (checkValue.isEmpty()){
             System.out.println("!!!");
         }
-//        db.createTableIfNotExists("456");
-//        db.write("456", "1", "5".getBytes(StandardCharsets.UTF_8));
-//        byte[] v = new byte[0];
-//        db.write("123", "1", null);
-//        Optional<byte[]> b = db.read("123","1");
-//        db.delete("123", "1");
-//        Optional<byte[]> c = db.read("167","1");
+        db.createTableIfNotExists("456");
+        db.write("456", "1", "5".getBytes(StandardCharsets.UTF_8));
+        byte[] v = {1, 1, 1, 1};
+        db.write("123", "1", v);
+        Optional<byte[]> b = db.read("123","1");
+        for (byte i:
+             b.get()) {
+            System.out.println(i);
+        }
+        db.delete("123", "1");
+        Optional<byte[]> c = db.read("167","1");
     }
 
 }

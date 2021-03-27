@@ -4,7 +4,7 @@ import com.itmo.java.basics.logic.WritableDatabaseRecord;
 
 public class RemoveDatabaseRecord implements WritableDatabaseRecord {
     private static final int REMOVED_OBJECT_SIZE = -1;
-    byte[] key;
+    private byte[] key;
 
     public RemoveDatabaseRecord(byte[] key){
         this.key = key;
