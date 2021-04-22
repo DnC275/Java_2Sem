@@ -6,8 +6,14 @@ import com.itmo.java.basics.logic.Segment;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class DatabaseCacheImpl extends  LinkedHashMap<String, byte[]> implements DatabaseCache {
+public class DatabaseCacheImpl extends LinkedHashMap<String, byte[]> implements DatabaseCache {
+    private static final int DEFAULT_CAPACITY = 5000;
     private int capacity;
+
+    public DatabaseCacheImpl(){
+        super(DEFAULT_CAPACITY);
+        this.capacity = DEFAULT_CAPACITY;
+    }
 
     public DatabaseCacheImpl(int capacity){
         super(capacity);
