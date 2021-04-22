@@ -5,6 +5,9 @@ import com.itmo.java.basics.index.impl.TableIndex;
 import com.itmo.java.basics.logic.Database;
 import com.itmo.java.basics.logic.Table;
 
+import com.itmo.java.basics.initialization.DatabaseInitializationContext;
+import com.itmo.java.basics.logic.Database;
+
 import java.io.File;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
@@ -24,15 +27,20 @@ public class DatabaseImpl implements Database {
     }
 
     public static Database create(String dbName, Path databaseRoot) throws DatabaseException {
-        if (!(new File(databaseRoot.toString())).exists()){
+        if (!(new File(databaseRoot.toString())).exists()) {
             throw new DatabaseException(String.format("Failed to create a database by path \"%s\"", databaseRoot));
         }
         Path fullPath = FileSystems.getDefault().getPath(databaseRoot.toString(), dbName);
         File file = new File(fullPath.toString());
-        if (!file.mkdir()){
+        if (!file.mkdir()) {
             throw new DatabaseException(String.format("Failed to create a database by path \"%s\"", databaseRoot));
         }
         return new DatabaseImpl(dbName, fullPath);
+    }
+
+
+    public static Database initializeFromContext(DatabaseInitializationContext context) {
+        return null;
     }
 
     @Override

@@ -10,10 +10,12 @@ import com.itmo.java.basics.exceptions.DatabaseException;
 import com.itmo.java.basics.logic.WritableDatabaseRecord;
 import com.itmo.java.basics.logic.io.DatabaseInputStream;
 import com.itmo.java.basics.logic.io.DatabaseOutputStream;
+import com.itmo.java.basics.initialization.SegmentInitializationContext;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -30,16 +32,20 @@ public class SegmentImpl implements Segment {
     }
 
     static Segment create(String segmentName, Path tableRootPath) throws DatabaseException {
-        try{
+        try {
             Path fullPath = FileSystems.getDefault().getPath(tableRootPath.toString(), segmentName);
             File file = new File(fullPath.toString());
-            if (!file.createNewFile()){
+            if (!file.createNewFile()) {
                 throw new IOException();
             }
             return new SegmentImpl(segmentName, fullPath, new SegmentIndex());
         } catch (IOException ex) {
             throw new DatabaseException(String.format("Failed to create a segment by path \"%s\"", tableRootPath), ex);
         }
+    }
+
+    public static Segment initializeFromContext(SegmentInitializationContext context) {
+        return null;
     }
 
     static String createSegmentName(String tableName) {

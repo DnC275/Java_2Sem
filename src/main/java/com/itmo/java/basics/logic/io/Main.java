@@ -11,7 +11,7 @@ import java.util.Optional;
 
 class Main {
     public static void main(String[] args) throws DatabaseException {
-        Database db = DatabaseImpl.create("DatabaseTest", Paths.get("/home/denis/TechProg/Lab1"));
+        Database db = DatabaseImpl.create("DatabaseTest", Paths.get("/home/denis/TechProg/Lab2"));
         db.createTableIfNotExists("123");
         byte[] value = {1, 2, 3};
         db.write("123", "12", null);

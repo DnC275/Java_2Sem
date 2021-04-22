@@ -2,12 +2,15 @@ package com.itmo.java.basics.logic.impl;
 
 import com.itmo.java.basics.exceptions.DatabaseException;
 import com.itmo.java.basics.index.impl.TableIndex;
+
 import com.itmo.java.basics.logic.Segment;
 import com.itmo.java.basics.logic.Table;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
+import com.itmo.java.basics.initialization.TableInitializationContext;
+
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -24,15 +27,19 @@ public class TableImpl implements Table {
     }
 
     static Table create(String tableName, Path pathToDatabaseRoot, TableIndex tableIndex) throws DatabaseException {
-        if (!(new File(pathToDatabaseRoot.toString())).exists()){
+        if (!(new File(pathToDatabaseRoot.toString())).exists()) {
             throw new DatabaseException(String.format("Failed to create a table by path \"%s\"", pathToDatabaseRoot));
         }
         Path fullPath = FileSystems.getDefault().getPath(pathToDatabaseRoot.toString(), tableName);
         File file = new File(fullPath.toString());
-        if (!file.mkdir()){
+        if (!file.mkdir()) {
             throw new DatabaseException(String.format("Failed to create a table by path \"%s\"", pathToDatabaseRoot));
         }
         return new TableImpl(tableName, fullPath, tableIndex);
+    }
+
+    public static Table initializeFromContext(TableInitializationContext context) {
+        return null;
     }
 
     @Override

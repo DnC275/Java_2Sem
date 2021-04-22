@@ -2,7 +2,9 @@ package com.itmo.java.basics.logic.io;
 
 import com.itmo.java.basics.logic.WritableDatabaseRecord;
 
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Записывает данные в БД
