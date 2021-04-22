@@ -35,7 +35,7 @@ public class TableImpl implements Table {
         if (!file.mkdir()) {
             throw new DatabaseException(String.format("Failed to create a table by path \"%s\"", pathToDatabaseRoot));
         }
-        return new TableImpl(tableName, fullPath, tableIndex);
+        return new CachingTable(new TableImpl(tableName, fullPath, tableIndex));
     }
 
     public static Table initializeFromContext(TableInitializationContext context) {

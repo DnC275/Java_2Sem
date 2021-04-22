@@ -1,20 +1,36 @@
 package com.itmo.java.basics.logic.impl;
 
 import com.itmo.java.basics.logic.DatabaseCache;
+import com.itmo.java.basics.logic.Segment;
 
-public class DatabaseCacheImpl implements DatabaseCache {
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+public class DatabaseCacheImpl extends  LinkedHashMap<String, byte[]> implements DatabaseCache {
+    private int capacity;
+
+    public DatabaseCacheImpl(int capacity){
+        super(capacity);
+        this.capacity = capacity;
+    }
+
+    @Override
+    protected boolean removeEldestEntry(Map.Entry<String, byte[]> eldest) {
+        return (size() > capacity);
+    }
+
     @Override
     public byte[] get(String key) {
-        return new byte[0];
+        return super.get(key);
     }
 
     @Override
     public void set(String key, byte[] value) {
-
+        super.put(key, value);
     }
 
     @Override
     public void delete(String key) {
-
+        super.remove(key);
     }
 }
