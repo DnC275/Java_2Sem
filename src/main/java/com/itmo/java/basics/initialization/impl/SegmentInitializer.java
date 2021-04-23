@@ -32,8 +32,6 @@ public class SegmentInitializer implements Initializer {
     public void perform(InitializationContext context) throws DatabaseException {
         Path path = context.currentSegmentContext().getSegmentPath();
         String name = context.currentSegmentContext().getSegmentName();
-//        SegmentIndex index = context.currentSegmentContext().getIndex();
-//        SegmentInitializationContextImplBuilder builder = new SegmentInitializationContextImplBuilder().segmentName(name).segmentPath(path).currentSize(0).index(index);
         try (DatabaseInputStream inputStream = new DatabaseInputStream(new FileInputStream(path.toString()))){
             Optional<DatabaseRecord> record = inputStream.readDbUnit();
             long currentSize = 0;
