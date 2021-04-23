@@ -26,7 +26,7 @@ public class TableImpl implements Table {
         this.index = index;
     }
 
-    static Table create(String tableName, Path pathToDatabaseRoot, TableIndex tableIndex) throws DatabaseException {
+    public static Table create(String tableName, Path pathToDatabaseRoot, TableIndex tableIndex) throws DatabaseException {
         if (!(new File(pathToDatabaseRoot.toString())).exists()) {
             throw new DatabaseException(String.format("Failed to create a table by path \"%s\"", pathToDatabaseRoot));
         }

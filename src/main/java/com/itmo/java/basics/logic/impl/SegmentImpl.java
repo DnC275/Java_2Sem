@@ -31,7 +31,7 @@ public class SegmentImpl implements Segment {
         this.index = index;
     }
 
-    static Segment create(String segmentName, Path tableRootPath) throws DatabaseException {
+    public static Segment create(String segmentName, Path tableRootPath) throws DatabaseException {
         try {
             Path fullPath = FileSystems.getDefault().getPath(tableRootPath.toString(), segmentName);
             File file = new File(fullPath.toString());
