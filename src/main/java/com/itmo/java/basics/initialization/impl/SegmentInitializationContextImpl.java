@@ -21,10 +21,6 @@ public class SegmentInitializationContextImpl implements SegmentInitializationCo
         this.index = index;
     }
 
-    public SegmentInitializationContextImpl(String segmentName, Path tablePath, int currentSize) {
-        this(segmentName, tablePath, currentSize, new SegmentIndex());
-    }
-
     @Override
     public String getSegmentName() {
         return this.segmentName;
