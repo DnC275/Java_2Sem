@@ -14,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 public class TableInitializer implements Initializer {
     SegmentInitializer segmentInit;
@@ -37,8 +38,11 @@ public class TableInitializer implements Initializer {
             throw new DatabaseException(""); //TODO
         }
         else{
-            for (File segment : path.listFiles()){
-                InitializationContextImpl newInit = new InitializationContextImpl(context.executionEnvironment(), context.currentDbContext(), context.currentTableContext(), new SegmentInitializationContextImpl(segment.getName(), Paths.get(path.toPath().toString(), segment.getName()), (int)segment.length(), new SegmentIndex()));
+            File[] a = path.listFiles();
+            Arrays.sort(a);
+            for (File segment : a){
+                InitializationContextImpl newInit = new InitializationContextImpl(context.executionEnvironment(), context.currentDbContext(), context.currentTableContext(),
+                        new SegmentInitializationContextImpl(segment.getName(), Paths.get(path.toPath().toString(), segment.getName()), (int)segment.length(), new SegmentIndex()));
                 segmentInit.perform(newInit);
             }
             context.currentDbContext().addTable(TableImpl.initializeFromContext(context.currentTableContext()));
