@@ -1,6 +1,7 @@
 package com.itmo.java.basics.logic.impl;
 
 import com.itmo.java.basics.exceptions.DatabaseException;
+import com.itmo.java.basics.index.impl.SegmentIndex;
 import com.itmo.java.basics.index.impl.TableIndex;
 
 import com.itmo.java.basics.logic.Segment;
@@ -26,6 +27,13 @@ public class TableImpl implements Table {
         this.index = index;
     }
 
+    private TableImpl(String name, Path path, TableIndex index, Segment segment){
+        this.name = name;
+        this.path = path;
+        this.index = index;
+        this.actualSegment = segment;
+    }
+
     public static Table create(String tableName, Path pathToDatabaseRoot, TableIndex tableIndex) throws DatabaseException {
         if (!(new File(pathToDatabaseRoot.toString())).exists()) {
             throw new DatabaseException(String.format("Failed to create a table by path \"%s\"", pathToDatabaseRoot));
@@ -39,8 +47,7 @@ public class TableImpl implements Table {
     }
 
     public static Table initializeFromContext(TableInitializationContext context) {
-        TableImpl table = new TableImpl(context.getTableName(), context.getTablePath(), context.getTableIndex());
-        table.actualSegment = context.getCurrentSegment();
+        CachingTable table = new CachingTable(new TableImpl(context.getTableName(), context.getTablePath(), context.getTableIndex(), context.getCurrentSegment()));
         return table;
     }
 
