@@ -19,6 +19,7 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 public class SegmentImpl implements Segment {
+    private static final int MAX_SIZE = 5;
     private final String name;
     private final Path path;
     private final SegmentIndex index;
@@ -45,7 +46,7 @@ public class SegmentImpl implements Segment {
 
     public static Segment initializeFromContext(SegmentInitializationContext context) {
         SegmentImpl s = new SegmentImpl(context.getSegmentName(), context.getSegmentPath(), context.getIndex());
-        if (context.getCurrentSize() >= 100000){
+        if (context.getCurrentSize() >= MAX_SIZE){
             s.readOnly = true;
         }
         return s;
@@ -109,7 +110,7 @@ public class SegmentImpl implements Segment {
             long offset = file.length();
             outputStream.write(databaseRecord);
             outputStream.close();
-            if(file.length() >= 100000)
+            if(file.length() >= MAX_SIZE)
             {
                 readOnly = true;
             }
