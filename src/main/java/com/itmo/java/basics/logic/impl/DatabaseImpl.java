@@ -40,7 +40,8 @@ public class DatabaseImpl implements Database {
 
 
     public static Database initializeFromContext(DatabaseInitializationContext context) {
-        return null;
+        DatabaseImpl db = new DatabaseImpl(context.getDbName(), context.getDatabasePath());
+        return db;
     }
 
     @Override

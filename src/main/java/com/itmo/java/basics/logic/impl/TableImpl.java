@@ -39,7 +39,8 @@ public class TableImpl implements Table {
     }
 
     public static Table initializeFromContext(TableInitializationContext context) {
-        return null;
+        TableImpl table = new TableImpl(context.getTableName(), context.getTablePath(), context.getTableIndex());
+        return table;
     }
 
     @Override
