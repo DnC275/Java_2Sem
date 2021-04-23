@@ -20,8 +20,8 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 public class SegmentImpl implements Segment {
-    private String name;
-    private Path path;
+    private final String name;
+    private final Path path;
     private KvsIndex index;
     private boolean readOnly = false;
 
@@ -45,7 +45,11 @@ public class SegmentImpl implements Segment {
     }
 
     public static Segment initializeFromContext(SegmentInitializationContext context) {
-        return null;
+        SegmentImpl s = new SegmentImpl(context.getSegmentName(), context.getSegmentPath(), context.getIndex());
+        if (context.getCurrentSize() > 100000){
+            s.readOnly = true;
+        }
+        return s;
     }
 
     static String createSegmentName(String tableName) {
@@ -80,7 +84,6 @@ public class SegmentImpl implements Segment {
         try (DatabaseInputStream inputStream = new DatabaseInputStream(new FileInputStream(path.toString()))) {
             inputStream.skip(offsetInfo.get().getOffset());
             Optional<DatabaseRecord> dbRecord = inputStream.readDbUnit();
-            inputStream.close();
             return dbRecord.map(record -> record.getValue());
         }
         catch (IOException ex){
