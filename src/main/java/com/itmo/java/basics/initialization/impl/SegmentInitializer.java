@@ -6,6 +6,7 @@ import com.itmo.java.basics.index.impl.SegmentOffsetInfoImpl;
 import com.itmo.java.basics.initialization.InitializationContext;
 import com.itmo.java.basics.initialization.Initializer;
 import com.itmo.java.basics.logic.DatabaseRecord;
+import com.itmo.java.basics.logic.impl.SegmentImpl;
 import com.itmo.java.basics.logic.io.DatabaseInputStream;
 import com.itmo.java.basics.initialization.impl.SegmentInitializationContextImpl.SegmentInitializationContextImplBuilder;
 
@@ -31,17 +32,18 @@ public class SegmentInitializer implements Initializer {
     public void perform(InitializationContext context) throws DatabaseException {
         Path path = context.currentSegmentContext().getSegmentPath();
         String name = context.currentSegmentContext().getSegmentName();
-        SegmentIndex index = context.currentSegmentContext().getIndex();
-        SegmentInitializationContextImplBuilder builder = new SegmentInitializationContextImplBuilder().segmentName(name).segmentPath(path).currentSize(0).index(index);
-        //builder.
+//        SegmentIndex index = context.currentSegmentContext().getIndex();
+//        SegmentInitializationContextImplBuilder builder = new SegmentInitializationContextImplBuilder().segmentName(name).segmentPath(path).currentSize(0).index(index);
         try (DatabaseInputStream inputStream = new DatabaseInputStream(new FileInputStream(path.toString()))){
             Optional<DatabaseRecord> record = inputStream.readDbUnit();
+            long currentSize = 0;
             while (record.isPresent()){
-
                 String key = new String(record.get().getKey(), StandardCharsets.UTF_8);
-                context.currentSegmentContext().getIndex().onIndexedEntityUpdated(key, new SegmentOffsetInfoImpl(context.currentSegmentContext().getCurrentSize()));
-                //context.currentSegmentContext().getCurrentSize()
+                context.currentSegmentContext().getIndex().onIndexedEntityUpdated(key, new SegmentOffsetInfoImpl(currentSize));
+                currentSize += record.get().size();
+                record = inputStream.readDbUnit();
             }
+            context.currentTableContext().updateCurrentSegment(SegmentImpl.initializeFromContext(context.currentSegmentContext()));
         }
         catch (FileNotFoundException ex){
             throw new DatabaseException(""); //TODO
