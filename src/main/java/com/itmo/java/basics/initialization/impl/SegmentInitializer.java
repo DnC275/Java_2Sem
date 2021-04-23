@@ -9,7 +9,7 @@ import com.itmo.java.basics.logic.DatabaseRecord;
 import com.itmo.java.basics.logic.Segment;
 import com.itmo.java.basics.logic.impl.SegmentImpl;
 import com.itmo.java.basics.logic.io.DatabaseInputStream;
-import com.itmo.java.basics.initialization.impl.SegmentInitializationContextImpl.SegmentInitializationContextImplBuilder;
+
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

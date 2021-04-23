@@ -7,7 +7,7 @@ import lombok.Builder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-@Builder
+
 public class SegmentInitializationContextImpl implements SegmentInitializationContext {
     private final String segmentName;
     private final Path segmentPath;

@@ -7,7 +7,6 @@ import com.itmo.java.basics.initialization.Initializer;
 import com.itmo.java.basics.logic.impl.DatabaseImpl;
 
 import java.io.File;
-import java.nio.file.Paths;
 
 public class DatabaseInitializer implements Initializer {
     private TableInitializer tableInit;
