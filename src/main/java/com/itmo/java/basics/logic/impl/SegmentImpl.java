@@ -1,6 +1,5 @@
 package com.itmo.java.basics.logic.impl;
 
-import com.itmo.java.basics.index.KvsIndex;
 import com.itmo.java.basics.index.SegmentOffsetInfo;
 import com.itmo.java.basics.index.impl.SegmentIndex;
 import com.itmo.java.basics.index.impl.SegmentOffsetInfoImpl;
@@ -22,7 +21,7 @@ import java.util.Optional;
 public class SegmentImpl implements Segment {
     private final String name;
     private final Path path;
-    private KvsIndex index;
+    private final SegmentIndex index;
     private boolean readOnly = false;
 
     private SegmentImpl(String name, Path path, SegmentIndex index) {
@@ -84,7 +83,7 @@ public class SegmentImpl implements Segment {
         try (DatabaseInputStream inputStream = new DatabaseInputStream(new FileInputStream(path.toString()))) {
             inputStream.skip(offsetInfo.get().getOffset());
             Optional<DatabaseRecord> dbRecord = inputStream.readDbUnit();
-            return dbRecord.map(record -> record.getValue());
+            return dbRecord.map(DatabaseRecord::getValue);
         }
         catch (IOException ex){
             throw new IOException(String.format("IO exception when reading value by key \"%s\" from file by path \"%s\"", objectKey, path), ex);
