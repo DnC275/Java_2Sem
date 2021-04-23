@@ -1,11 +1,11 @@
 package com.itmo.java.basics.initialization.impl;
 
-
+import com.itmo.java.basics.logic.impl.TableImpl;
 import com.itmo.java.basics.exceptions.DatabaseException;
 import com.itmo.java.basics.index.impl.SegmentIndex;
 import com.itmo.java.basics.initialization.InitializationContext;
 import com.itmo.java.basics.initialization.Initializer;
-import com.itmo.java.basics.logic.impl.TableImpl;
+
 
 import java.io.File;
 import java.nio.file.Paths;
