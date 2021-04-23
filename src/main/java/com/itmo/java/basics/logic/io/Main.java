@@ -19,29 +19,22 @@ import java.util.Optional;
 
 class Main {
     public static void main(String[] args) throws DatabaseException {
-//        Database db = DatabaseImpl.create("DatabaseTest", Paths.get("/home/denis/TechProg/Lab2"));
+//        Database db = DatabaseImpl.create("Database2", Paths.get("/home/denis/TechProg/Lab2/Databases"));
 //        db.createTableIfNotExists("123");
 //        byte[] value = {1, 2, 3};
-//        db.write("123", "12", null);
-//        Optional<byte[]> checkValue = db.read("123", "12");
-//        if (checkValue.isEmpty()){
-//            System.out.println("!!!");
-//        }
+//        db.write("123", "12", value);
 //        db.createTableIfNotExists("456");
 //        db.write("456", "1", "5".getBytes(StandardCharsets.UTF_8));
 //        byte[] v = {1, 1, 1, 1};
 //        db.write("123", "1", v);
 //        Optional<byte[]> b = db.read("123","1");
-//        for (byte i:
-//             b.get()) {
-//            System.out.println(i);
-//        }
-//        db.delete("123", "1");
-//        Optional<byte[]> c = db.read("167","1");
+
+
         ExecutionEnvironment ex = new ExecutionEnvironmentImpl(new DatabaseConfig("Databases"));
         Initializer init = new DatabaseServerInitializer(new DatabaseInitializer(new TableInitializer(new SegmentInitializer())));
         InitializationContext context = new InitializationContextImpl(ex, new DatabaseInitializationContextImpl("", Path.of("")),
                 new TableInitializationContextImpl("", Path.of(""), new TableIndex()), new SegmentInitializationContextImpl("", Path.of(""), 0, new SegmentIndex()));
         init.perform(context);
+        System.out.println("123");
     }
 }

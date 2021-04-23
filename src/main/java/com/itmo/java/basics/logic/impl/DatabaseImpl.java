@@ -41,6 +41,10 @@ public class DatabaseImpl implements Database {
 
     public static Database initializeFromContext(DatabaseInitializationContext context) {
         DatabaseImpl db = new DatabaseImpl(context.getDbName(), context.getDatabasePath());
+        Map<String, Table> tables = context.getTables();
+        for (String tableName : tables.keySet()) {
+            db.tableMap.put(tableName, tables.get(tableName));
+        }
         return db;
     }
 
