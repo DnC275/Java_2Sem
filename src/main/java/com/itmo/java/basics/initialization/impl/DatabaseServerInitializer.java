@@ -23,7 +23,7 @@ public class DatabaseServerInitializer implements Initializer {
     @Override
     public void perform(InitializationContext context) throws DatabaseException {
         File path = context.executionEnvironment().getWorkingPath().toFile();
-        if (path.exists()){
+        if (!path.exists()){
             if (!path.mkdirs()) {
                 throw new DatabaseException(""); //TODO
             }

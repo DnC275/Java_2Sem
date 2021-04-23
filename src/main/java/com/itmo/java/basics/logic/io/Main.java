@@ -1,6 +1,14 @@
 package com.itmo.java.basics.logic.io;
 
+import com.itmo.java.basics.config.DatabaseConfig;
+import com.itmo.java.basics.console.ExecutionEnvironment;
+import com.itmo.java.basics.console.impl.ExecutionEnvironmentImpl;
 import com.itmo.java.basics.exceptions.DatabaseException;
+import com.itmo.java.basics.index.impl.SegmentIndex;
+import com.itmo.java.basics.index.impl.TableIndex;
+import com.itmo.java.basics.initialization.InitializationContext;
+import com.itmo.java.basics.initialization.Initializer;
+import com.itmo.java.basics.initialization.impl.*;
 import com.itmo.java.basics.logic.Database;
 import com.itmo.java.basics.logic.impl.DatabaseImpl;
 
@@ -30,6 +38,10 @@ class Main {
 //        }
 //        db.delete("123", "1");
 //        Optional<byte[]> c = db.read("167","1");
-
+        ExecutionEnvironment ex = new ExecutionEnvironmentImpl(new DatabaseConfig("DatabaseTest"));
+        Initializer init = new DatabaseServerInitializer(new DatabaseInitializer(new TableInitializer(new SegmentInitializer())));
+        InitializationContext context = new InitializationContextImpl(ex, new DatabaseInitializationContextImpl("", Path.of("")),
+                new TableInitializationContextImpl("", Path.of(""), new TableIndex()), new SegmentInitializationContextImpl("", Path.of(""), 0, new SegmentIndex()));
+        init.perform(context);
     }
 }

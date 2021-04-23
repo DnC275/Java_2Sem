@@ -26,7 +26,7 @@ public class DatabaseInitializer implements Initializer {
     @Override
     public void perform(InitializationContext context) throws DatabaseException {
         File path = context.executionEnvironment().getWorkingPath().toFile();
-        if (path.exists()){
+        if (!path.exists()){
             throw new DatabaseException(""); //TODO
         }
         else{
