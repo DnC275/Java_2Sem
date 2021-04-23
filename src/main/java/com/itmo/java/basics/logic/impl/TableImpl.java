@@ -1,33 +1,30 @@
 package com.itmo.java.basics.logic.impl;
 
 import com.itmo.java.basics.exceptions.DatabaseException;
-import com.itmo.java.basics.index.impl.SegmentIndex;
 import com.itmo.java.basics.index.impl.TableIndex;
-
+import com.itmo.java.basics.initialization.TableInitializationContext;
 import com.itmo.java.basics.logic.Segment;
 import com.itmo.java.basics.logic.Table;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
-import com.itmo.java.basics.initialization.TableInitializationContext;
-
 import java.nio.file.Path;
 import java.util.Optional;
 
 public class TableImpl implements Table {
-    private String name;
-    private Path path;
-    private TableIndex index;
+    private final String name;
+    private final Path path;
+    private final TableIndex index;
     private Segment actualSegment = null;
 
-    private TableImpl(String name, Path path, TableIndex index){
+    private TableImpl(String name, Path path, TableIndex index) {
         this.name = name;
         this.path = path;
         this.index = index;
     }
 
-    private TableImpl(String name, Path path, TableIndex index, Segment segment){
+    private TableImpl(String name, Path path, TableIndex index, Segment segment) {
         this.name = name;
         this.path = path;
         this.index = index;
@@ -64,17 +61,17 @@ public class TableImpl implements Table {
             }
             actualSegment.write(objectKey, objectValue);
             index.onIndexedEntityUpdated(objectKey, actualSegment);
-        } catch (IOException ex){
+        } catch (IOException ex) {
             throw new DatabaseException(String.format("IO exception when writing to table \"%s\" by path \"%s\"", name, path), ex);
         }
     }
 
     @Override
     public Optional<byte[]> read(String objectKey) throws DatabaseException {
-        if (index.searchForKey(objectKey).isPresent()){
-            try{
+        if (index.searchForKey(objectKey).isPresent()) {
+            try {
                 return index.searchForKey(objectKey).get().read(objectKey);
-            } catch (IOException ex){
+            } catch (IOException ex) {
                 throw new DatabaseException(String.format("IO exception when reading from table \"%s\" by path \"%s\"", name, path), ex);
             }
         }
@@ -89,7 +86,7 @@ public class TableImpl implements Table {
             }
             actualSegment.delete(objectKey);
             index.onIndexedEntityUpdated(objectKey, actualSegment);
-        } catch (IOException ex){
+        } catch (IOException ex) {
             throw new DatabaseException(String.format("IO exception when writing to table \"%s\" by path \"%s\"", name, path), ex);
         }
     }
