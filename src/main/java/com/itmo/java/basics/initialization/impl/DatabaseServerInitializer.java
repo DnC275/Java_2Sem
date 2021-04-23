@@ -5,8 +5,10 @@ import com.itmo.java.basics.initialization.InitializationContext;
 import com.itmo.java.basics.initialization.Initializer;
 
 public class DatabaseServerInitializer implements Initializer {
+    DatabaseInitializer dbInit;
 
     public DatabaseServerInitializer(DatabaseInitializer databaseInitializer) {
+        this.dbInit = databaseInitializer;
     }
 
     /**
