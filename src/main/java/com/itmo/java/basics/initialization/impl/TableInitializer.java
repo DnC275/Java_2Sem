@@ -40,8 +40,8 @@ public class TableInitializer implements Initializer {
             for (File segment : path.listFiles()){
                 InitializationContextImpl newInit = new InitializationContextImpl(context.executionEnvironment(), context.currentDbContext(), context.currentTableContext(), new SegmentInitializationContextImpl(segment.getName(), path.toPath(), 0, new SegmentIndex()));
                 segmentInit.perform(newInit);
-                context.currentDbContext().addTable(TableImpl.initializeFromContext(newInit.currentTableContext()));
             }
+            context.currentDbContext().addTable(TableImpl.initializeFromContext(context.currentTableContext()));
         }
     }
 }
