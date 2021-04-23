@@ -6,6 +6,7 @@ import com.itmo.java.basics.index.impl.SegmentOffsetInfoImpl;
 import com.itmo.java.basics.initialization.InitializationContext;
 import com.itmo.java.basics.initialization.Initializer;
 import com.itmo.java.basics.logic.DatabaseRecord;
+import com.itmo.java.basics.logic.Segment;
 import com.itmo.java.basics.logic.impl.SegmentImpl;
 import com.itmo.java.basics.logic.io.DatabaseInputStream;
 import com.itmo.java.basics.initialization.impl.SegmentInitializationContextImpl.SegmentInitializationContextImplBuilder;
@@ -33,18 +34,18 @@ public class SegmentInitializer implements Initializer {
     public void perform(InitializationContext context) throws DatabaseException {
         Path path = context.currentSegmentContext().getSegmentPath();
         String name = context.currentSegmentContext().getSegmentName();
-        try (DatabaseInputStream inputStream = new DatabaseInputStream(new FileInputStream(Paths.get(path.toString(), name).toString()))){
-            System.out.println(path);
-            System.out.println(name);
+        try (DatabaseInputStream inputStream = new DatabaseInputStream(new FileInputStream(path.toString()))){
+            Segment segment = SegmentImpl.initializeFromContext(context.currentSegmentContext());
             Optional<DatabaseRecord> record = inputStream.readDbUnit();
             long currentSize = 0;
             while (record.isPresent()){
                 String key = new String(record.get().getKey(), StandardCharsets.UTF_8);
                 context.currentSegmentContext().getIndex().onIndexedEntityUpdated(key, new SegmentOffsetInfoImpl(currentSize));
+                context.currentTableContext().getTableIndex().onIndexedEntityUpdated(key, segment);
                 currentSize += record.get().size();
                 record = inputStream.readDbUnit();
             }
-            context.currentTableContext().updateCurrentSegment(SegmentImpl.initializeFromContext(context.currentSegmentContext()));
+            context.currentTableContext().updateCurrentSegment(segment);
         }
         catch (FileNotFoundException ex){
             throw new DatabaseException(""); //TODO

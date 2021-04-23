@@ -27,7 +27,7 @@ class Main {
 //        db.write("456", "1", "5".getBytes(StandardCharsets.UTF_8));
 //        byte[] v = {1, 1, 1, 1};
 //        db.write("123", "1", v);
-//        Optional<byte[]> b = db.read("123","1");
+//        System.out.println(db.read("123", "12"));
 
 
         ExecutionEnvironment ex = new ExecutionEnvironmentImpl(new DatabaseConfig("Databases"));
@@ -35,6 +35,9 @@ class Main {
         InitializationContext context = new InitializationContextImpl(ex, new DatabaseInitializationContextImpl("", Path.of("")),
                 new TableInitializationContextImpl("", Path.of(""), new TableIndex()), new SegmentInitializationContextImpl("", Path.of(""), 0, new SegmentIndex()));
         init.perform(context);
-        System.out.println("123");
+        Optional<Database> db = ex.getDatabase("Database2");
+        Database d = db.get();
+        Optional<byte[]> a = d.read("123", "12");
+        System.out.println(db.get().read("123", "12"));
     }
 }

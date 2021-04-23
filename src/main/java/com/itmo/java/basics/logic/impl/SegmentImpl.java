@@ -45,7 +45,7 @@ public class SegmentImpl implements Segment {
 
     public static Segment initializeFromContext(SegmentInitializationContext context) {
         SegmentImpl s = new SegmentImpl(context.getSegmentName(), context.getSegmentPath(), context.getIndex());
-        if (context.getCurrentSize() > 100000){
+        if (context.getCurrentSize() >= 100000){
             s.readOnly = true;
         }
         return s;

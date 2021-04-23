@@ -40,6 +40,7 @@ public class TableImpl implements Table {
 
     public static Table initializeFromContext(TableInitializationContext context) {
         TableImpl table = new TableImpl(context.getTableName(), context.getTablePath(), context.getTableIndex());
+        table.actualSegment = context.getCurrentSegment();
         return table;
     }
 

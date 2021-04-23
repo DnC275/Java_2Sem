@@ -14,15 +14,15 @@ public class SegmentInitializationContextImpl implements SegmentInitializationCo
     private Integer currentSize;
     private SegmentIndex index;
 
-    public SegmentInitializationContextImpl(String segmentName, Path segmentPath, int currentSize, SegmentIndex index) {
+    public SegmentInitializationContextImpl(String segmentName, Path path, int currentSize, SegmentIndex index) {
         this.segmentName = segmentName;
-        this.segmentPath = segmentPath;
+        this.segmentPath = Paths.get(path.toString(), segmentName);
         this.currentSize = currentSize;
         this.index = index;
     }
 
     public SegmentInitializationContextImpl(String segmentName, Path tablePath, int currentSize) {
-        this(segmentName, Paths.get(tablePath.toString(), segmentName), currentSize, new SegmentIndex());
+        this(segmentName, tablePath, currentSize, new SegmentIndex());
     }
 
     @Override
