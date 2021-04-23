@@ -73,7 +73,7 @@ public class SegmentImpl implements Segment {
 
     @Override
     public Optional<byte[]> read(String objectKey) throws IOException {
-        Optional <SegmentOffsetInfo> offsetInfo = index.searchForKey(objectKey);
+        Optional<SegmentOffsetInfo> offsetInfo = index.searchForKey(objectKey);
         if (offsetInfo.isEmpty()){
             return Optional.empty();
         }
