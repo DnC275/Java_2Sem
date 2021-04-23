@@ -19,7 +19,7 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 public class SegmentImpl implements Segment {
-    private static final int MAX_SIZE = 5;
+    private static final int MAX_SIZE = 100000;
     private final String name;
     private final Path path;
     private final SegmentIndex index;
