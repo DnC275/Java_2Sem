@@ -27,7 +27,7 @@ public class TableInitializationContextImpl implements TableInitializationContex
 
     @Override
     public Path getTablePath() {
-        return this.tablePath;
+        return Paths.get(tablePath.toString(), tableName);
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.itmo.java.basics.initialization.DatabaseInitializationContext;
 import com.itmo.java.basics.logic.Table;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ public class DatabaseInitializationContextImpl implements DatabaseInitialization
 
     @Override
     public Path getDatabasePath() {
-        return dbRoot;
+        return Paths.get(dbRoot.toString(), dbName);
     }
 
     @Override
