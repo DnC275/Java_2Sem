@@ -22,7 +22,7 @@ public class SegmentInitializationContextImpl implements SegmentInitializationCo
     }
 
     public SegmentInitializationContextImpl(String segmentName, Path tablePath, int currentSize) {
-        this(segmentName, tablePath, currentSize, new SegmentIndex());
+        this(segmentName, Paths.get(tablePath.toString(), segmentName), currentSize, new SegmentIndex());
     }
 
     @Override
