@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 
@@ -32,9 +33,9 @@ public class SegmentInitializer implements Initializer {
     public void perform(InitializationContext context) throws DatabaseException {
         Path path = context.currentSegmentContext().getSegmentPath();
         String name = context.currentSegmentContext().getSegmentName();
-        System.out.println(path);
-        System.out.println(name);
-        try (DatabaseInputStream inputStream = new DatabaseInputStream(new FileInputStream(path.toString()))){
+        try (DatabaseInputStream inputStream = new DatabaseInputStream(new FileInputStream(Paths.get(path.toString(), name).toString()))){
+            System.out.println(path);
+            System.out.println(name);
             Optional<DatabaseRecord> record = inputStream.readDbUnit();
             long currentSize = 0;
             while (record.isPresent()){

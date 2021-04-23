@@ -32,8 +32,7 @@ public class TableInitializer implements Initializer {
      */
     @Override
     public void perform(InitializationContext context) throws DatabaseException {
-        File path = context.executionEnvironment().getWorkingPath().toFile();
-        System.out.println(path);
+        File path = Paths.get(context.currentTableContext().getTablePath().toString(), context.currentTableContext().getTableName()).toFile();
         if (!path.exists()){
             throw new DatabaseException(""); //TODO
         }

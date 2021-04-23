@@ -38,7 +38,7 @@ class Main {
 //        }
 //        db.delete("123", "1");
 //        Optional<byte[]> c = db.read("167","1");
-        ExecutionEnvironment ex = new ExecutionEnvironmentImpl(new DatabaseConfig("DatabaseTest"));
+        ExecutionEnvironment ex = new ExecutionEnvironmentImpl(new DatabaseConfig("Databases"));
         Initializer init = new DatabaseServerInitializer(new DatabaseInitializer(new TableInitializer(new SegmentInitializer())));
         InitializationContext context = new InitializationContextImpl(ex, new DatabaseInitializationContextImpl("", Path.of("")),
                 new TableInitializationContextImpl("", Path.of(""), new TableIndex()), new SegmentInitializationContextImpl("", Path.of(""), 0, new SegmentIndex()));

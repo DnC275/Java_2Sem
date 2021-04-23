@@ -7,6 +7,7 @@ import com.itmo.java.basics.initialization.Initializer;
 import com.itmo.java.basics.logic.impl.DatabaseImpl;
 
 import java.io.File;
+import java.nio.file.Paths;
 
 public class DatabaseInitializer implements Initializer {
     private TableInitializer tableInit;
@@ -25,7 +26,7 @@ public class DatabaseInitializer implements Initializer {
      */
     @Override
     public void perform(InitializationContext context) throws DatabaseException {
-        File path = context.executionEnvironment().getWorkingPath().toFile();
+        File path = Paths.get(context.currentDbContext().getDatabasePath().toString(), context.currentDbContext().getDbName()).toFile();
         if (!path.exists()){
             throw new DatabaseException(""); //TODO
         }
