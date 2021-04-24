@@ -78,7 +78,7 @@ public class SegmentImpl implements Segment {
     @Override
     public Optional<byte[]> read(String objectKey) throws IOException {
         Optional<SegmentOffsetInfo> offsetInfo = index.searchForKey(objectKey);
-        if (offsetInfo.isEmpty()){
+        if (offsetInfo.isEmpty()) {
             return Optional.empty();
         }
         try (DatabaseInputStream inputStream = new DatabaseInputStream(new FileInputStream(path.toString()))) {
@@ -110,8 +110,7 @@ public class SegmentImpl implements Segment {
             long offset = file.length();
             outputStream.write(databaseRecord);
             outputStream.close();
-            if(file.length() >= MAX_SIZE)
-            {
+            if(file.length() >= MAX_SIZE) {
                 readOnly = true;
             }
             return offset;
