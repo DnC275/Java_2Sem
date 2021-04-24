@@ -22,7 +22,7 @@ public class DatabaseImpl implements Database {
     private DatabaseImpl(String name, Path path){
         this.name = name;
         this.path = path;
-        this.tableMap = new HashMap<String, Table>();
+        this.tableMap = new HashMap<>();
     }
 
     public static Database create(String dbName, Path databaseRoot) throws DatabaseException {
@@ -40,10 +40,11 @@ public class DatabaseImpl implements Database {
 
     public static Database initializeFromContext(DatabaseInitializationContext context) {
         DatabaseImpl db = new DatabaseImpl(context.getDbName(), context.getDatabasePath());
-        Map<String, Table> tables = context.getTables();
-        for (String tableName : tables.keySet()) {
-            db.tableMap.put(tableName, tables.get(tableName));
-        }
+        db.tableMap = context.getTables();
+//        Map<String, Table> tables = context.getTables();
+//        for (String tableName : tables.keySet()) {
+//            db.tableMap.put(tableName, tables.get(tableName));
+//        }
         return db;
     }
 
