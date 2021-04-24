@@ -9,14 +9,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DatabaseInitializationContextImpl implements DatabaseInitializationContext {
-    private String dbName;
-    private Path dbRoot;
-    private Map<String, Table> tables;
+    private final String dbName;
+    private final Path dbRoot;
+    private final Map<String, Table> tables;
 
     public DatabaseInitializationContextImpl(String dbName, Path databaseRoot) {
         this.dbName = dbName;
         this.dbRoot = databaseRoot;
-        this.tables = new HashMap<String, Table>();
+        this.tables = new HashMap<>();
     }
 
     @Override

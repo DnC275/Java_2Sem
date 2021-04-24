@@ -9,7 +9,7 @@ import com.itmo.java.basics.logic.impl.DatabaseImpl;
 import java.io.File;
 
 public class DatabaseInitializer implements Initializer {
-    private TableInitializer tableInit;
+    private final TableInitializer tableInit;
 
     public DatabaseInitializer(TableInitializer tableInitializer) {
         this.tableInit = tableInitializer;
