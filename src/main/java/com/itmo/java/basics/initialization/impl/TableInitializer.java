@@ -30,7 +30,7 @@ public class TableInitializer implements Initializer {
     public void perform(InitializationContext context) throws DatabaseException {
         File path = context.currentTableContext().getTablePath().toFile();
         if (!path.exists()) {
-            throw new DatabaseException(""); //TODO
+            throw new DatabaseException(String.format("Path \"%s\" not found", path));
         } else {
             File[] a = path.listFiles();
             Arrays.sort(a);
