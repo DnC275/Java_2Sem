@@ -57,10 +57,10 @@ public class SegmentInitializer implements Initializer {
             context.currentTableContext().updateCurrentSegment(segment);
         }
         catch (FileNotFoundException ex){
-            throw new DatabaseException(""); //TODO
+            throw new DatabaseException(String.format("File \"%s\" not found", path)); 
         }
         catch (IOException ex){
-            throw new DatabaseException(""); //TODO
+            throw new DatabaseException(String.format("IO actions with \"%s\" failed", path));
         }
     }
 }
