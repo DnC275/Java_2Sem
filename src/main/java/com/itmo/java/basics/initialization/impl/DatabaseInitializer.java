@@ -27,7 +27,7 @@ public class DatabaseInitializer implements Initializer {
     public void perform(InitializationContext context) throws DatabaseException {
         File path = context.currentDbContext().getDatabasePath().toFile();
         if (!path.exists()){
-            throw new DatabaseException(""); //TODO
+            throw new DatabaseException(String.format("Path \"%s\" doesn't exist", path));
         }
         else{
             for (File table : path.listFiles()){
