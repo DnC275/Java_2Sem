@@ -17,7 +17,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 
 public class SegmentInitializer implements Initializer {
@@ -33,16 +36,23 @@ public class SegmentInitializer implements Initializer {
     @Override
     public void perform(InitializationContext context) throws DatabaseException {
         Path path = context.currentSegmentContext().getSegmentPath();
+        Set<String> s = new HashSet<String>();
         try (DatabaseInputStream inputStream = new DatabaseInputStream(new FileInputStream(path.toString()))){
-            Segment segment = SegmentImpl.initializeFromContext(context.currentSegmentContext());
+//            Segment segment = SegmentImpl.initializeFromContext(context.currentSegmentContext());
             Optional<DatabaseRecord> record = inputStream.readDbUnit();
             long currentSize = 0;
             while (record.isPresent()){
                 String key = new String(record.get().getKey(), StandardCharsets.UTF_8);
                 context.currentSegmentContext().getIndex().onIndexedEntityUpdated(key, new SegmentOffsetInfoImpl(currentSize));
-                context.currentTableContext().getTableIndex().onIndexedEntityUpdated(key, segment);
+                s.add(key);
+//                context.currentTableContext().getTableIndex().onIndexedEntityUpdated(key, segment);
                 currentSize += record.get().size();
                 record = inputStream.readDbUnit();
+            }
+            SegmentInitializationContextImpl newInit = new SegmentInitializationContextImpl(context.currentSegmentContext().getSegmentName(), path, (int)currentSize, context.currentSegmentContext().getIndex());
+            Segment segment = SegmentImpl.initializeFromContext(newInit);
+            for (String key : s) {
+                context.currentTableContext().getTableIndex().onIndexedEntityUpdated(key, segment);
             }
             context.currentTableContext().updateCurrentSegment(segment);
         }
