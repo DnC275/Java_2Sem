@@ -1,7 +1,6 @@
 package com.itmo.java.basics.initialization.impl;
 
 import com.itmo.java.basics.exceptions.DatabaseException;
-import com.itmo.java.basics.index.impl.SegmentIndex;
 import com.itmo.java.basics.index.impl.SegmentOffsetInfoImpl;
 import com.itmo.java.basics.initialization.InitializationContext;
 import com.itmo.java.basics.initialization.Initializer;
@@ -16,8 +15,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -38,14 +35,12 @@ public class SegmentInitializer implements Initializer {
         Path path = context.currentSegmentContext().getSegmentPath();
         Set<String> s = new HashSet<>();
         try (DatabaseInputStream inputStream = new DatabaseInputStream(new FileInputStream(path.toString()))){
-//            Segment segment = SegmentImpl.initializeFromContext(context.currentSegmentContext());
             Optional<DatabaseRecord> record = inputStream.readDbUnit();
             long currentSize = 0;
             while (record.isPresent()){
                 String key = new String(record.get().getKey(), StandardCharsets.UTF_8);
                 context.currentSegmentContext().getIndex().onIndexedEntityUpdated(key, new SegmentOffsetInfoImpl(currentSize));
                 s.add(key);
-//                context.currentTableContext().getTableIndex().onIndexedEntityUpdated(key, segment);
                 currentSize += record.get().size();
                 record = inputStream.readDbUnit();
             }
