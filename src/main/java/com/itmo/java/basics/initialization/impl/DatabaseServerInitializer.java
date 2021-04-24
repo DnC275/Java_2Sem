@@ -25,7 +25,7 @@ public class DatabaseServerInitializer implements Initializer {
         File path = context.executionEnvironment().getWorkingPath().toFile();
         if (!path.exists()){
             if (!path.mkdirs()) {
-                throw new DatabaseException(""); //TODO
+                throw new DatabaseException(String.format("Cannot make default dir in \"%s\"", path));
             }
         }
         else{
