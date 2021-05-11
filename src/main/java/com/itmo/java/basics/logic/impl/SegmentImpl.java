@@ -1,6 +1,5 @@
 package com.itmo.java.basics.logic.impl;
 
-import com.itmo.java.basics.index.KvsIndex;
 import com.itmo.java.basics.index.SegmentOffsetInfo;
 import com.itmo.java.basics.index.impl.SegmentIndex;
 import com.itmo.java.basics.index.impl.SegmentOffsetInfoImpl;
@@ -10,17 +9,20 @@ import com.itmo.java.basics.exceptions.DatabaseException;
 import com.itmo.java.basics.logic.WritableDatabaseRecord;
 import com.itmo.java.basics.logic.io.DatabaseInputStream;
 import com.itmo.java.basics.logic.io.DatabaseOutputStream;
+import com.itmo.java.basics.initialization.SegmentInitializationContext;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
 
 public class SegmentImpl implements Segment {
-    private String name;
-    private Path path;
-    private KvsIndex index;
+    private static final int MAX_SIZE = 100000;
+    private final String name;
+    private final Path path;
+    private final SegmentIndex index;
     private boolean readOnly = false;
 
     private SegmentImpl(String name, Path path, SegmentIndex index) {
@@ -29,17 +31,25 @@ public class SegmentImpl implements Segment {
         this.index = index;
     }
 
-    static Segment create(String segmentName, Path tableRootPath) throws DatabaseException {
-        try{
+    public static Segment create(String segmentName, Path tableRootPath) throws DatabaseException {
+        try {
             Path fullPath = FileSystems.getDefault().getPath(tableRootPath.toString(), segmentName);
             File file = new File(fullPath.toString());
-            if (!file.createNewFile()){
+            if (!file.createNewFile()) {
                 throw new IOException();
             }
             return new SegmentImpl(segmentName, fullPath, new SegmentIndex());
         } catch (IOException ex) {
             throw new DatabaseException(String.format("Failed to create a segment by path \"%s\"", tableRootPath), ex);
         }
+    }
+
+    public static Segment initializeFromContext(SegmentInitializationContext context) {
+        SegmentImpl s = new SegmentImpl(context.getSegmentName(), context.getSegmentPath(), context.getIndex());
+        if (context.getCurrentSize() >= MAX_SIZE){
+            s.readOnly = true;
+        }
+        return s;
     }
 
     static String createSegmentName(String tableName) {
@@ -67,15 +77,14 @@ public class SegmentImpl implements Segment {
 
     @Override
     public Optional<byte[]> read(String objectKey) throws IOException {
-        Optional <SegmentOffsetInfo> offsetInfo = index.searchForKey(objectKey);
-        if (offsetInfo.isEmpty()){
+        Optional<SegmentOffsetInfo> offsetInfo = index.searchForKey(objectKey);
+        if (offsetInfo.isEmpty()) {
             return Optional.empty();
         }
         try (DatabaseInputStream inputStream = new DatabaseInputStream(new FileInputStream(path.toString()))) {
             inputStream.skip(offsetInfo.get().getOffset());
             Optional<DatabaseRecord> dbRecord = inputStream.readDbUnit();
-            inputStream.close();
-            return dbRecord.map(record -> record.getValue());
+            return dbRecord.map(DatabaseRecord::getValue);
         }
         catch (IOException ex){
             throw new IOException(String.format("IO exception when reading value by key \"%s\" from file by path \"%s\"", objectKey, path), ex);
@@ -101,8 +110,7 @@ public class SegmentImpl implements Segment {
             long offset = file.length();
             outputStream.write(databaseRecord);
             outputStream.close();
-            if(file.length() >= 100000)
-            {
+            if(file.length() >= MAX_SIZE) {
                 readOnly = true;
             }
             return offset;

@@ -2,7 +2,9 @@ package com.itmo.java.basics.logic.io;
 
 import com.itmo.java.basics.logic.WritableDatabaseRecord;
 
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Записывает данные в БД
@@ -32,7 +34,9 @@ public class DatabaseOutputStream extends DataOutputStream {
         writeInt(databaseRecord.getKeySize());
         write(databaseRecord.getKey());
         writeInt(databaseRecord.getValueSize());
-        write(databaseRecord.getValue());
+        if (databaseRecord.isValuePresented()) {
+            write(databaseRecord.getValue());
+        }
         return databaseRecord.size();
     }
 }
