@@ -28,9 +28,9 @@ public class InitializationContextImpl implements InitializationContext {
     }
     public InitializationContextImpl(ExecutionEnvironment executionEnvironment){
         this.executionEnvironment = executionEnvironment;
-        this.currentDatabaseContext = new DatabaseInitializationContextImpl("", Path.of(""));
-        this.currentTableContext = new TableInitializationContextImpl("", Path.of(""), new TableIndex());
-        this.currentSegmentContext = new SegmentInitializationContextImpl("", Path.of(""),  0, new SegmentIndex());
+        this.currentDatabaseContext = null;
+        this.currentTableContext = null;
+        this.currentSegmentContext = null;
     }
 
     @Override
