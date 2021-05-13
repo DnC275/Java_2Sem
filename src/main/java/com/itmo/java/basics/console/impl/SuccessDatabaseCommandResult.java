@@ -4,19 +4,21 @@ import com.itmo.java.basics.console.DatabaseCommandResult;
 import com.itmo.java.protocol.model.RespBulkString;
 import com.itmo.java.protocol.model.RespObject;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * Результат успешной команды
  */
 public class SuccessDatabaseCommandResult implements DatabaseCommandResult {
+    private final String payload;
 
     public SuccessDatabaseCommandResult(byte[] payload) {
-        //TODO implement
+        this.payload = new String(payload, StandardCharsets.UTF_8);
     }
 
     @Override
     public String getPayLoad() {
-        //TODO implement
-        return null;
+        return payload;
     }
 
     @Override

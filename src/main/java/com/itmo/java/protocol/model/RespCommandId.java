@@ -7,6 +7,7 @@ import java.io.OutputStream;
  * Id
  */
 public class RespCommandId implements RespObject {
+    private final int commandId;
 
     /**
      * Код объекта
@@ -14,7 +15,7 @@ public class RespCommandId implements RespObject {
     public static final byte CODE = '!';
 
     public RespCommandId(int commandId) {
-        //TODO implement
+        this.commandId = commandId;
     }
 
     /**
@@ -29,8 +30,7 @@ public class RespCommandId implements RespObject {
 
     @Override
     public String asString() {
-        //TODO implement
-        return null;
+        return Integer.toString(commandId);
     }
 
     @Override

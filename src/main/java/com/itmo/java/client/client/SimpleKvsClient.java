@@ -1,12 +1,17 @@
 package com.itmo.java.client.client;
 
 
+import com.itmo.java.client.command.CreateDatabaseKvsCommand;
 import com.itmo.java.client.connection.KvsConnection;
+import com.itmo.java.client.exception.ConnectionException;
 import com.itmo.java.client.exception.DatabaseExecutionException;
+import com.itmo.java.protocol.model.RespObject;
 
 import java.util.function.Supplier;
 
 public class SimpleKvsClient implements KvsClient {
+    private final String databaseName;
+    private final KvsConnection kvsConnection;
 
     /**
      * Констурктор
@@ -15,13 +20,20 @@ public class SimpleKvsClient implements KvsClient {
      * @param connectionSupplier метод создания коннекшена к базе
      */
     public SimpleKvsClient(String databaseName, Supplier<KvsConnection> connectionSupplier) {
-        //TODO implement
+        this.databaseName = databaseName;
+        this.kvsConnection = connectionSupplier.get();
     }
 
     @Override
     public String createDatabase() throws DatabaseExecutionException {
-        //TODO implement
-        return null;
+        try {
+            CreateDatabaseKvsCommand createDatabaseKvsCommand = new CreateDatabaseKvsCommand(databaseName);
+            RespObject object = kvsConnection.send(createDatabaseKvsCommand.getCommandId(), createDatabaseKvsCommand.serialize());
+            return object.asString();
+        }
+        catch(ConnectionException e){
+            throw new DatabaseExecutionException(e.getMessage(), e);
+        }
     }
 
     @Override

@@ -2,11 +2,13 @@ package com.itmo.java.protocol.model;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 /**
  * Сообщение об ошибке в RESP протоколе
  */
 public class RespError implements RespObject {
+    private final byte[] message;
 
     /**
      * Код объекта
@@ -14,7 +16,7 @@ public class RespError implements RespObject {
     public static final byte CODE = '-';
 
     public RespError(byte[] message) {
-        //TODO implement
+        this.message = message;
     }
 
     /**
@@ -29,8 +31,7 @@ public class RespError implements RespObject {
 
     @Override
     public String asString() {
-        //TODO implement
-        return null;
+        return Arrays.toString(message);
     }
 
     @Override

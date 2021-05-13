@@ -7,12 +7,17 @@ import com.itmo.java.basics.console.ExecutionEnvironment;
 import com.itmo.java.basics.logic.DatabaseFactory;
 import com.itmo.java.protocol.model.RespObject;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Команда для создания базы данных
  */
 public class CreateDatabaseCommand implements DatabaseCommand {
+    private final ExecutionEnvironment environment;
+    private final DatabaseFactory factory;
+    private final List<RespObject> objects;
+
 
     /**
      * Создает команду.
@@ -26,7 +31,9 @@ public class CreateDatabaseCommand implements DatabaseCommand {
      * @throws IllegalArgumentException если передано неправильное количество аргументов
      */
     public CreateDatabaseCommand(ExecutionEnvironment env, DatabaseFactory factory, List<RespObject> commandArgs) {
-        //TODO implement
+        this.environment = env;
+        this.factory = factory;
+        this.objects = new LinkedList<>(commandArgs);
     }
 
     /**
@@ -36,7 +43,8 @@ public class CreateDatabaseCommand implements DatabaseCommand {
      */
     @Override
     public DatabaseCommandResult execute() {
-        //TODO implement
+        String databaseName = objects.get(DatabaseCommandArgPositions.DATABASE_NAME.getPositionIndex()).asString();
+        //TODO
         return null;
     }
 }

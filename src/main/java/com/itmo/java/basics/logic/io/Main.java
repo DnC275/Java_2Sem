@@ -32,15 +32,20 @@ class Main {
 //        System.out.println(new String(db.read("123", "12").get(), StandardCharsets.UTF_8));
 
 
-        ExecutionEnvironment ex = new ExecutionEnvironmentImpl(new DatabaseConfig("Databases"));
-        Initializer init = new DatabaseServerInitializer(new DatabaseInitializer(new TableInitializer(new SegmentInitializer())));
-        InitializationContext context = new InitializationContextImpl(ex, new DatabaseInitializationContextImpl("", Path.of("")),
-                new TableInitializationContextImpl("", Path.of(""), new TableIndex()), new SegmentInitializationContextImpl("", Path.of(""), 0, new SegmentIndex()));
-        init.perform(context);
-        Optional<Database> db = ex.getDatabase("Database2");
-        Database d = db.get();
-        Optional<byte[]> a = d.read("123", "1");
-        byte[] b = a.get();
-        System.out.println(new String(db.get().read("123", "1").get(), StandardCharsets.UTF_8));
+//        ExecutionEnvironment ex = new ExecutionEnvironmentImpl(new DatabaseConfig("Databases"));
+//        Initializer init = new DatabaseServerInitializer(new DatabaseInitializer(new TableInitializer(new SegmentInitializer())));
+//        InitializationContext context = new InitializationContextImpl(ex, new DatabaseInitializationContextImpl("", Path.of("")),
+//                new TableInitializationContextImpl("", Path.of(""), new TableIndex()), new SegmentInitializationContextImpl("", Path.of(""), 0, new SegmentIndex()));
+//        init.perform(context);
+//        Optional<Database> db = ex.getDatabase("Database2");
+//        Database d = db.get();
+//        Optional<byte[]> a = d.read("123", "1");
+//        byte[] b = a.get();
+//        System.out.println(new String(db.get().read("123", "1").get(), StandardCharsets.UTF_8));
+        StringBuilder builder = new StringBuilder();
+        builder.append("123");
+        builder.append("321");
+        builder.deleteCharAt(builder.length() - 1);
+        System.out.println(builder);
     }
 }

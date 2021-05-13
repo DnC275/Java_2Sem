@@ -2,12 +2,15 @@ package com.itmo.java.protocol.model;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Массив RESP объектов
  */
 public class RespArray implements RespObject {
+    private final List<RespObject> objects;
 
     /**
      * Код объекта
@@ -15,7 +18,7 @@ public class RespArray implements RespObject {
     public static final byte CODE = '*';
 
     public RespArray(RespObject... objects) {
-        //TODO implement
+        this.objects = new LinkedList<>(Arrays.asList(objects));
     }
 
     /**
@@ -35,8 +38,14 @@ public class RespArray implements RespObject {
      */
     @Override
     public String asString() {
-        //TODO implement
-        return null;
+        StringBuilder builder = new StringBuilder();
+        for (RespObject object:
+             objects) {
+            builder.append(object.asString());
+            builder.append(" ");
+        }
+        builder.deleteCharAt(builder.length() - 1);
+        return builder.toString();
     }
 
     @Override
@@ -45,7 +54,6 @@ public class RespArray implements RespObject {
     }
 
     public List<RespObject> getObjects() {
-        //TODO implement
-        return null;
+        return new LinkedList<>(objects);
     }
 }

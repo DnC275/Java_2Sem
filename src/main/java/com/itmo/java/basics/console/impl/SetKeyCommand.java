@@ -6,6 +6,7 @@ import com.itmo.java.basics.console.DatabaseCommandResult;
 import com.itmo.java.basics.console.ExecutionEnvironment;
 import com.itmo.java.protocol.model.RespObject;
 
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -13,6 +14,8 @@ import java.util.List;
  * Команда для создания записи значения
  */
 public class SetKeyCommand implements DatabaseCommand {
+    private final ExecutionEnvironment environment;
+    private final List<RespObject> objects;
 
     /**
      * Создает команду.
@@ -25,7 +28,8 @@ public class SetKeyCommand implements DatabaseCommand {
      * @throws IllegalArgumentException если передано неправильное количество аргументов
      */
     public SetKeyCommand(ExecutionEnvironment env, List<RespObject> commandArgs) {
-        //TODO implement
+        this.environment = env;
+        this.objects = new LinkedList<>(commandArgs);
     }
 
     /**
