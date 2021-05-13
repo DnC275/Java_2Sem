@@ -38,7 +38,7 @@ public class RespBulkString implements RespObject {
      */
     @Override
     public String asString() {
-        return Arrays.toString(data);
+        return new String(data);
     }
 
     @Override

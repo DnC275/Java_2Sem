@@ -4,10 +4,16 @@ import com.itmo.java.basics.console.DatabaseCommand;
 import com.itmo.java.basics.console.DatabaseCommandArgPositions;
 import com.itmo.java.basics.console.DatabaseCommandResult;
 import com.itmo.java.basics.console.ExecutionEnvironment;
+import com.itmo.java.basics.exceptions.DatabaseException;
+import com.itmo.java.basics.logic.Database;
+import com.itmo.java.basics.logic.Table;
 import com.itmo.java.protocol.model.RespObject;
 
+import javax.xml.crypto.Data;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Команда для чтения данных по ключу
@@ -41,7 +47,23 @@ public class GetKeyCommand implements DatabaseCommand {
      */
     @Override
     public DatabaseCommandResult execute() {
-        //TODO implement
-        return null;
+        try {
+            String databaseName = objects.get(DatabaseCommandArgPositions.DATABASE_NAME.getPositionIndex()).asString();
+            String tableName = objects.get(DatabaseCommandArgPositions.TABLE_NAME.getPositionIndex()).asString();
+            String key = objects.get(DatabaseCommandArgPositions.KEY.getPositionIndex()).asString();
+            Optional<Database> database = environment.getDatabase(databaseName);
+            if (database.isEmpty()){
+                throw new DatabaseException("Message"); //TODO
+            }
+            Optional<byte[]> value = database.get().read(tableName, key);
+            if (value.isEmpty()){
+                throw new DatabaseException("Message"); //TODO
+            }
+//            String ans = new String(value.get());
+            return new SuccessDatabaseCommandResult(value.get());
+        }
+        catch(DatabaseException e){
+            return new FailedDatabaseCommandResult(e.getMessage());
+        }
     }
 }
