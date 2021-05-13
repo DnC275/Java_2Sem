@@ -6,15 +6,16 @@ import com.itmo.java.protocol.model.RespError;
 import com.itmo.java.protocol.model.RespObject;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 /**
  * Зафейленная команда
  */
 public class FailedDatabaseCommandResult implements DatabaseCommandResult {
-    private final byte[] payload;
+    private final Optional<byte[]> payload;
 
     public FailedDatabaseCommandResult(String payload) {
-        this.payload = payload.getBytes(StandardCharsets.UTF_8);
+        this.payload = Optional.of(payload.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
@@ -22,7 +23,7 @@ public class FailedDatabaseCommandResult implements DatabaseCommandResult {
      */
     @Override
     public String getPayLoad() {
-        return new String(payload);
+        return payload.map(Object::toString).orElse(null);
     }
 
     @Override
@@ -35,6 +36,6 @@ public class FailedDatabaseCommandResult implements DatabaseCommandResult {
      */
     @Override
     public RespObject serialize() {
-        return new RespError(payload);
+        return new RespError(getPayLoad().getBytes(StandardCharsets.UTF_8));
     }
 }

@@ -11,15 +11,15 @@ import java.util.Optional;
  * Результат успешной команды
  */
 public class SuccessDatabaseCommandResult implements DatabaseCommandResult {
-    private final byte[] payload;
+    private final Optional<byte[]> payload;
 
     public SuccessDatabaseCommandResult(byte[] payload) {
-        this.payload = payload;
+        this.payload = Optional.of(payload);
     }
 
     @Override
     public String getPayLoad() {
-        return new String(payload);
+        return payload.map(Object::toString).orElse(null);
     }
 
     @Override
@@ -32,6 +32,6 @@ public class SuccessDatabaseCommandResult implements DatabaseCommandResult {
      */
     @Override
     public RespObject serialize() {
-        return new RespBulkString(payload);
+        return new RespBulkString(getPayLoad().getBytes(StandardCharsets.UTF_8));
     }
 }
