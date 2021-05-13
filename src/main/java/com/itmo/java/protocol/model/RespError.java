@@ -31,7 +31,7 @@ public class RespError implements RespObject {
 
     @Override
     public String asString() {
-        return Arrays.toString(message);
+        return new String(message);
     }
 
     @Override
