@@ -31,9 +31,11 @@ public class CreateDatabaseKvsCommand implements KvsCommand {
      */
     @Override
     public RespArray serialize() {
+        //Change naming
         RespCommandId respCommandId = new RespCommandId(this.getCommandId());
+        RespBulkString respCommandName = new RespBulkString(COMMAND_NAME.getBytes(StandardCharsets.UTF_8));
         RespBulkString respBulkString = new RespBulkString(databaseName.getBytes(StandardCharsets.UTF_8));
-        return new RespArray(respCommandId, respBulkString);
+        return new RespArray(respCommandId, respCommandName, respBulkString);
     }
 
     @Override
