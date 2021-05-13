@@ -1,12 +1,16 @@
 package com.itmo.java.basics.console.impl;
 
+import com.itmo.java.basics.DatabaseServer;
 import com.itmo.java.basics.console.DatabaseCommand;
 import com.itmo.java.basics.console.DatabaseCommandArgPositions;
 import com.itmo.java.basics.console.DatabaseCommandResult;
 import com.itmo.java.basics.console.ExecutionEnvironment;
+import com.itmo.java.basics.exceptions.DatabaseException;
+import com.itmo.java.basics.logic.Database;
 import com.itmo.java.basics.logic.DatabaseFactory;
 import com.itmo.java.protocol.model.RespObject;
 
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,6 +35,9 @@ public class CreateDatabaseCommand implements DatabaseCommand {
      * @throws IllegalArgumentException если передано неправильное количество аргументов
      */
     public CreateDatabaseCommand(ExecutionEnvironment env, DatabaseFactory factory, List<RespObject> commandArgs) {
+        if (commandArgs.size() != 3){
+            throw new IllegalArgumentException("Message"); //TODO
+        }
         this.environment = env;
         this.factory = factory;
         this.objects = new LinkedList<>(commandArgs);
@@ -43,8 +50,14 @@ public class CreateDatabaseCommand implements DatabaseCommand {
      */
     @Override
     public DatabaseCommandResult execute() {
-        String databaseName = objects.get(DatabaseCommandArgPositions.DATABASE_NAME.getPositionIndex()).asString();
-        //TODO
-        return null;
+        try {
+            String databaseName = objects.get(DatabaseCommandArgPositions.DATABASE_NAME.getPositionIndex()).asString();
+            Database database = factory.createNonExistent(databaseName, environment.getWorkingPath());
+            environment.addDatabase(database);
+            return new SuccessDatabaseCommandResult(String.format("Database '%s' created", databaseName).getBytes(StandardCharsets.UTF_8));
+        }
+        catch(DatabaseException e){
+            return new FailedDatabaseCommandResult(e.getMessage());
+        }
     }
 }

@@ -34,17 +34,16 @@ public class DatabaseServer {
     }
 
     public CompletableFuture<DatabaseCommandResult> executeNextCommand(RespArray message) {
-        return CompletableFuture.supplyAsync(() -> {
-            List<RespObject> objects = message.getObjects();
-            RespObject commandIdObject = objects.get(DatabaseCommandArgPositions.COMMAND_ID.getPositionIndex());
-            RespObject commandNameObject = objects.get(DatabaseCommandArgPositions.COMMAND_NAME.getPositionIndex());
-            DatabaseCommand command = DatabaseCommands.valueOf(commandNameObject.asString()).getCommand(environment, objects);
-            return command.execute();
-        }, executorService);
+        List<RespObject> objects = message.getObjects();
+        RespObject commandIdObject = objects.get(DatabaseCommandArgPositions.COMMAND_ID.getPositionIndex());
+        RespObject commandNameObject = objects.get(DatabaseCommandArgPositions.COMMAND_NAME.getPositionIndex());
+        DatabaseCommand command = DatabaseCommands.valueOf(commandNameObject.asString()).getCommand(environment, objects);
+        return executeNextCommand(command);
     }
 
     public CompletableFuture<DatabaseCommandResult> executeNextCommand(DatabaseCommand command) {
-        //TODO implement
-        return null;
+        return CompletableFuture.supplyAsync(() -> {
+            return command.execute();
+        }, executorService);
     }
 }

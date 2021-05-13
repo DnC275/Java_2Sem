@@ -28,6 +28,9 @@ public class SetKeyCommand implements DatabaseCommand {
      * @throws IllegalArgumentException если передано неправильное количество аргументов
      */
     public SetKeyCommand(ExecutionEnvironment env, List<RespObject> commandArgs) {
+        if (commandArgs.size() != 6){
+            throw new IllegalArgumentException("Message"); //TODO
+        }
         this.environment = env;
         this.objects = new LinkedList<>(commandArgs);
     }

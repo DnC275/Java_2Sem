@@ -28,6 +28,9 @@ public class DeleteKeyCommand implements DatabaseCommand {
      * @throws IllegalArgumentException если передано неправильное количество аргументов
      */
     public DeleteKeyCommand(ExecutionEnvironment env, List<RespObject> commandArgs) {
+        if (commandArgs.size() != 5){
+            throw new IllegalArgumentException("Message"); //TODO
+        }
         this.environment = env;
         this.objects = new LinkedList<>(commandArgs);
     }

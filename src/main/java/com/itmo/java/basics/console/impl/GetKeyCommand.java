@@ -27,6 +27,9 @@ public class GetKeyCommand implements DatabaseCommand {
      * @throws IllegalArgumentException если передано неправильное количество аргументов
      */
     public GetKeyCommand(ExecutionEnvironment env, List<RespObject> commandArgs) {
+        if (commandArgs.size() != 5){
+            throw new IllegalArgumentException("Message"); //TODO
+        }
         this.environment = env;
         this.objects = new LinkedList<>(commandArgs);
     }

@@ -1,7 +1,13 @@
 package com.itmo.java.basics.console;
 
+import com.itmo.java.basics.console.impl.CreateDatabaseCommand;
+import com.itmo.java.basics.exceptions.DatabaseException;
+import com.itmo.java.basics.logic.Database;
+import com.itmo.java.basics.logic.DatabaseFactory;
+import com.itmo.java.basics.logic.impl.DatabaseImpl;
 import com.itmo.java.protocol.model.RespObject;
 
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -13,8 +19,12 @@ public enum DatabaseCommands {
     CREATE_DATABASE {
         @Override
         public DatabaseCommand getCommand(ExecutionEnvironment env, List<RespObject> commandArgs) {
-            //TODO implement
-            return null;
+            return new CreateDatabaseCommand(env, new DatabaseFactory() {
+                @Override
+                public Database createNonExistent(String dbName, Path dbRoot) throws DatabaseException {
+                    return DatabaseImpl.create(dbName, dbRoot);
+                }
+            }, commandArgs);
         }
     },
     CREATE_TABLE {
