@@ -1,6 +1,7 @@
 package com.itmo.java.client.client;
 
 
+import com.itmo.java.basics.exceptions.DatabaseException;
 import com.itmo.java.client.command.*;
 import com.itmo.java.client.connection.KvsConnection;
 import com.itmo.java.client.exception.ConnectionException;
@@ -26,57 +27,40 @@ public class SimpleKvsClient implements KvsClient {
 
     @Override
     public String createDatabase() throws DatabaseExecutionException {
-        try {
-            KvsCommand createDatabaseKvsCommand = new CreateDatabaseKvsCommand(databaseName);
-            RespObject object = kvsConnection.send(createDatabaseKvsCommand.getCommandId(), createDatabaseKvsCommand.serialize());
-            return object.asString();
-        }
-        catch(ConnectionException e){
-            throw new DatabaseExecutionException(e.getMessage(), e);
-        }
+        KvsCommand createDatabaseKvsCommand = new CreateDatabaseKvsCommand(databaseName);
+        return sendCommand(createDatabaseKvsCommand);
     }
 
     @Override
     public String createTable(String tableName) throws DatabaseExecutionException {
-        try {
-            KvsCommand createTableKvsCommand = new CreateTableKvsCommand(databaseName, tableName);
-            RespObject object = kvsConnection.send(createTableKvsCommand.getCommandId(), createTableKvsCommand.serialize());
-            return object.asString();
-        }
-        catch(ConnectionException e){
-            throw new DatabaseExecutionException(e.getMessage(), e);
-        }
+        KvsCommand createTableKvsCommand = new CreateTableKvsCommand(databaseName, tableName);
+        return sendCommand(createTableKvsCommand);
     }
 
     @Override
     public String get(String tableName, String key) throws DatabaseExecutionException {
-        try {
-            KvsCommand getKvsCommand = new GetKvsCommand(databaseName, tableName, key);
-            RespObject object = kvsConnection.send(getKvsCommand.getCommandId(), getKvsCommand.serialize());
-            return object.asString();
-        }
-        catch(ConnectionException e){
-            throw new DatabaseExecutionException(e.getMessage(), e);
-        }
+        KvsCommand getKvsCommand = new GetKvsCommand(databaseName, tableName, key);
+        return sendCommand(getKvsCommand);
     }
 
     @Override
     public String set(String tableName, String key, String value) throws DatabaseExecutionException {
-        try {
-            KvsCommand setKvsCommand = new SetKvsCommand(databaseName, tableName, key, value);
-            RespObject object = kvsConnection.send(setKvsCommand.getCommandId(), setKvsCommand.serialize());
-            return object.asString();
-        }
-        catch(ConnectionException e){
-            throw new DatabaseExecutionException(e.getMessage(), e);
-        }
+        KvsCommand setKvsCommand = new SetKvsCommand(databaseName, tableName, key, value);
+        return sendCommand(setKvsCommand);
     }
 
     @Override
     public String delete(String tableName, String key) throws DatabaseExecutionException {
+        KvsCommand deleteKvsCommand = new DeleteKvsCommand(databaseName, tableName, key);
+        return sendCommand(deleteKvsCommand);
+    }
+
+    private String sendCommand(KvsCommand command) throws DatabaseExecutionException {
         try {
-            KvsCommand deleteKvsCommand = new DeleteKvsCommand(databaseName, tableName, key);
-            RespObject object = kvsConnection.send(deleteKvsCommand.getCommandId(), deleteKvsCommand.serialize());
+            RespObject object = kvsConnection.send(command.getCommandId(), command.serialize());
+            if (object.isError()){
+                throw new DatabaseExecutionException(object.asString());
+            }
             return object.asString();
         }
         catch(ConnectionException e){

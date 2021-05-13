@@ -36,7 +36,14 @@ public class RespCommandId implements RespObject {
     @Override
     public void write(OutputStream os) throws IOException {
         os.write(CODE);
-        os.write(commandId);
+        writeInt(commandId, os);
         os.write(CRLF);
+    }
+
+    private void writeInt(int value, OutputStream os) throws IOException{
+        os.write(value >>> 24 & 255);
+        os.write(value >>> 16 & 255);
+        os.write(value >>> 8 & 255);
+        os.write(value >>> 0 & 255);
     }
 }
