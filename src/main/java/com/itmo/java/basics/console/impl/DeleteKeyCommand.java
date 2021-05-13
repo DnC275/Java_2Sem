@@ -55,10 +55,11 @@ public class DeleteKeyCommand implements DatabaseCommand {
                 throw new DatabaseException("Message"); //TODO
             }
             database.get().delete(tableName, key);
-            return new SuccessDatabaseCommandResult("Value deleted successfully".getBytes(StandardCharsets.UTF_8));
+            return DatabaseCommandResult.success(String.
+                    format("Value of key '%s' was deleted successfully", key).getBytes(StandardCharsets.UTF_8));
         }
         catch(DatabaseException e){
-            return new FailedDatabaseCommandResult(e.getMessage());
+            return DatabaseCommandResult.error(e);
         }
     }
 }

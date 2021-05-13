@@ -3,6 +3,7 @@ package com.itmo.java.protocol.model;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;

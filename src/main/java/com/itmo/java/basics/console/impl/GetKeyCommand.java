@@ -6,11 +6,8 @@ import com.itmo.java.basics.console.DatabaseCommandResult;
 import com.itmo.java.basics.console.ExecutionEnvironment;
 import com.itmo.java.basics.exceptions.DatabaseException;
 import com.itmo.java.basics.logic.Database;
-import com.itmo.java.basics.logic.Table;
 import com.itmo.java.protocol.model.RespObject;
 
-import javax.xml.crypto.Data;
-import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -59,11 +56,10 @@ public class GetKeyCommand implements DatabaseCommand {
             if (value.isEmpty()){
                 throw new DatabaseException("Message"); //TODO
             }
-//            String ans = new String(value.get());
-            return new SuccessDatabaseCommandResult(value.get());
+            return DatabaseCommandResult.success(value.get());
         }
         catch(DatabaseException e){
-            return new FailedDatabaseCommandResult(e.getMessage());
+            return DatabaseCommandResult.error(e);
         }
     }
 }

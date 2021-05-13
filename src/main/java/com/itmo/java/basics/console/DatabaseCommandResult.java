@@ -4,8 +4,6 @@ import com.itmo.java.basics.console.impl.FailedDatabaseCommandResult;
 import com.itmo.java.basics.console.impl.SuccessDatabaseCommandResult;
 import com.itmo.java.protocol.model.RespObject;
 
-import java.nio.charset.StandardCharsets;
-
 public interface DatabaseCommandResult extends DatabaseApiSerializable {
 
     /**

@@ -44,6 +44,6 @@ public class RespCommandId implements RespObject {
         os.write(value >>> 24 & 255);
         os.write(value >>> 16 & 255);
         os.write(value >>> 8 & 255);
-        os.write(value >>> 0 & 255);
+        os.write(value & 255);
     }
 }

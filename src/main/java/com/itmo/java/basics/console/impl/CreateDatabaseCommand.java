@@ -1,6 +1,5 @@
 package com.itmo.java.basics.console.impl;
 
-import com.itmo.java.basics.DatabaseServer;
 import com.itmo.java.basics.console.DatabaseCommand;
 import com.itmo.java.basics.console.DatabaseCommandArgPositions;
 import com.itmo.java.basics.console.DatabaseCommandResult;
@@ -54,10 +53,11 @@ public class CreateDatabaseCommand implements DatabaseCommand {
             String databaseName = objects.get(DatabaseCommandArgPositions.DATABASE_NAME.getPositionIndex()).asString();
             Database database = factory.createNonExistent(databaseName, environment.getWorkingPath());
             environment.addDatabase(database);
-            return new SuccessDatabaseCommandResult(String.format("Database '%s' created", databaseName).getBytes(StandardCharsets.UTF_8));
+            return DatabaseCommandResult.success(String.
+                    format("Database '%s' was created successfully", databaseName).getBytes(StandardCharsets.UTF_8));
         }
         catch(DatabaseException e){
-            return new FailedDatabaseCommandResult(e.getMessage());
+            return DatabaseCommandResult.error(e);
         }
     }
 }

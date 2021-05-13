@@ -53,10 +53,11 @@ public class CreateTableCommand implements DatabaseCommand {
                 throw new DatabaseException("Message"); //TODO
             }
             database.get().createTableIfNotExists(tableName);
-            return new SuccessDatabaseCommandResult(String.format("Table '%s' created in database '%s'", tableName, databaseName).getBytes(StandardCharsets.UTF_8));
+            return DatabaseCommandResult.success(String.
+                    format("Table '%s' was created successfully", tableName).getBytes(StandardCharsets.UTF_8));
         }
         catch (DatabaseException e){
-            return new FailedDatabaseCommandResult(e.getMessage());
+            return DatabaseCommandResult.error(e);
         }
     }
 }

@@ -56,7 +56,7 @@ public class SetKeyCommand implements DatabaseCommand {
                 throw new DatabaseException("Message"); //TODO
             }
             database.get().write(tableName, key, value.getBytes(StandardCharsets.UTF_8));
-            return new SuccessDatabaseCommandResult("Value set successfully".getBytes(StandardCharsets.UTF_8));
+            return DatabaseCommandResult.success(String.format("Value of key '%s' was set successfully", key).getBytes(StandardCharsets.UTF_8));
         }
         catch(DatabaseException e){
             return new FailedDatabaseCommandResult(e.getMessage());
