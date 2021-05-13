@@ -14,7 +14,7 @@ public class SuccessDatabaseCommandResult implements DatabaseCommandResult {
     private final Optional<byte[]> payload;
 
     public SuccessDatabaseCommandResult(byte[] payload) {
-        this.payload = Optional.of(payload);
+        this.payload = Optional.ofNullable(payload);
     }
 
     @Override

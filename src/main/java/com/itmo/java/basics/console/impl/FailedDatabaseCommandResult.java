@@ -15,7 +15,8 @@ public class FailedDatabaseCommandResult implements DatabaseCommandResult {
     private final Optional<byte[]> payload;
 
     public FailedDatabaseCommandResult(String payload) {
-        this.payload = Optional.of(payload.getBytes(StandardCharsets.UTF_8));
+        Optional<String> payloadAsString = Optional.ofNullable(payload);
+        this.payload = payloadAsString.isPresent() ? Optional.of(payload.getBytes(StandardCharsets.UTF_8)) : Optional.empty();
     }
 
     /**
