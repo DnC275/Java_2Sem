@@ -36,6 +36,6 @@ public class FailedDatabaseCommandResult implements DatabaseCommandResult {
      */
     @Override
     public RespObject serialize() {
-        return new RespError(getPayLoad().getBytes(StandardCharsets.UTF_8));
+        return new RespError(payload.orElse(null));
     }
 }

@@ -32,6 +32,6 @@ public class SuccessDatabaseCommandResult implements DatabaseCommandResult {
      */
     @Override
     public RespObject serialize() {
-        return new RespBulkString(getPayLoad().getBytes(StandardCharsets.UTF_8));
+        return new RespBulkString(payload.orElse(null));
     }
 }
