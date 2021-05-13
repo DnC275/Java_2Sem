@@ -2,6 +2,7 @@ package com.itmo.java.protocol.model;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 /**
@@ -43,10 +44,14 @@ public class RespBulkString implements RespObject {
 
     @Override
     public void write(OutputStream os) throws IOException {
-        os.write(CODE);
-        os.write(data.length);
-        os.write(CRLF);
-        os.write(data);
-        os.write(CRLF);
+        StringBuilder builder = new StringBuilder();
+        builder.append(CODE).append(data.length).append(new String(CRLF)).append(new String(data)).append(new String(CRLF));
+        os.write(builder.toString().getBytes(StandardCharsets.UTF_8));
+//
+//        os.write(CODE);
+//        os.write(data.length);
+//        os.write(CRLF);
+//        os.write(data);
+//        os.write(CRLF);
     }
 }
