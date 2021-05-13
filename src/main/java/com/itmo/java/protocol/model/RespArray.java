@@ -38,6 +38,7 @@ public class RespArray implements RespObject {
      */
     @Override
     public String asString() {
+        //TODO Change it
         StringBuilder builder = new StringBuilder();
         for (RespObject object:
              objects) {
@@ -50,7 +51,12 @@ public class RespArray implements RespObject {
 
     @Override
     public void write(OutputStream os) throws IOException {
-        //TODO implement
+        os.write(CODE);
+        os.write(objects.size());
+        os.write(CRLF);
+        for (RespObject object : objects) {
+            object.write(os);
+        }
     }
 
     public List<RespObject> getObjects() {

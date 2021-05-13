@@ -36,6 +36,8 @@ public class RespError implements RespObject {
 
     @Override
     public void write(OutputStream os) throws IOException {
-        //TODO implement
+        os.write(CODE);
+        os.write(message);
+        os.write(CRLF);
     }
 }

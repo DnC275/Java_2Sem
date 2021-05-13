@@ -35,6 +35,8 @@ public class RespCommandId implements RespObject {
 
     @Override
     public void write(OutputStream os) throws IOException {
-        //TODO implement
+        os.write(CODE);
+        os.write(commandId);
+        os.write(CRLF);
     }
 }

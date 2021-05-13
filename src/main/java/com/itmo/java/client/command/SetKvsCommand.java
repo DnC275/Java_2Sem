@@ -35,7 +35,7 @@ public class SetKvsCommand implements KvsCommand {
         RespBulkString respBulkStringDb = new RespBulkString(databaseName.getBytes(StandardCharsets.UTF_8));
         RespBulkString respBulkStringTable = new RespBulkString(tableName.getBytes(StandardCharsets.UTF_8));
         RespBulkString respBulkStringKey = new RespBulkString(key.getBytes(StandardCharsets.UTF_8));
-        RespBulkString respBulkStringValue = new RespBulkString(key.getBytes(StandardCharsets.UTF_8));
+        RespBulkString respBulkStringValue = new RespBulkString(value.getBytes(StandardCharsets.UTF_8));
         return new RespArray(respCommandId, respCommandName, respBulkStringDb, respBulkStringTable, respBulkStringKey, respBulkStringValue);
     }
 
