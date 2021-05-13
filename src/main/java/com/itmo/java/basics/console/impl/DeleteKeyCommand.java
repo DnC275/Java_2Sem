@@ -4,10 +4,14 @@ import com.itmo.java.basics.console.DatabaseCommand;
 import com.itmo.java.basics.console.DatabaseCommandArgPositions;
 import com.itmo.java.basics.console.DatabaseCommandResult;
 import com.itmo.java.basics.console.ExecutionEnvironment;
+import com.itmo.java.basics.exceptions.DatabaseException;
+import com.itmo.java.basics.logic.Database;
 import com.itmo.java.protocol.model.RespObject;
 
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Команда для создания удаления значения по ключу
@@ -42,7 +46,19 @@ public class DeleteKeyCommand implements DatabaseCommand {
      */
     @Override
     public DatabaseCommandResult execute() {
-        //TODO implement
-        return null;
+        try {
+            String databaseName = objects.get(DatabaseCommandArgPositions.DATABASE_NAME.getPositionIndex()).asString();
+            String tableName = objects.get(DatabaseCommandArgPositions.TABLE_NAME.getPositionIndex()).asString();
+            String key = objects.get(DatabaseCommandArgPositions.KEY.getPositionIndex()).asString();
+            Optional<Database> database = environment.getDatabase(databaseName);
+            if (database.isEmpty()){
+                throw new DatabaseException("Message"); //TODO
+            }
+            database.get().delete(tableName, key);
+            return new SuccessDatabaseCommandResult("Value deleted successfully".getBytes(StandardCharsets.UTF_8));
+        }
+        catch(DatabaseException e){
+            return new FailedDatabaseCommandResult(e.getMessage());
+        }
     }
 }

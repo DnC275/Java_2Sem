@@ -47,7 +47,7 @@ public class RespBulkString implements RespObject {
     @Override
     public void write(OutputStream os) throws IOException {
         os.write(CODE);
-        Integer len = data.length;
+        Integer  len = data.length;
         ByteBuffer bb = ByteBuffer.allocate(4);
         bb.putInt(len);
         os.write(bb.array());
