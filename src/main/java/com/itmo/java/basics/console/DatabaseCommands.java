@@ -1,6 +1,6 @@
 package com.itmo.java.basics.console;
 
-import com.itmo.java.basics.console.impl.CreateDatabaseCommand;
+import com.itmo.java.basics.console.impl.*;
 import com.itmo.java.basics.exceptions.DatabaseException;
 import com.itmo.java.basics.logic.Database;
 import com.itmo.java.basics.logic.DatabaseFactory;
@@ -30,29 +30,25 @@ public enum DatabaseCommands {
     CREATE_TABLE {
         @Override
         public DatabaseCommand getCommand(ExecutionEnvironment env, List<RespObject> commandArgs) {
-            //TODO implement
-            return null;
+            return new CreateTableCommand(env, commandArgs);
         }
     },
     SET_KEY {
         @Override
         public DatabaseCommand getCommand(ExecutionEnvironment env, List<RespObject> commandArgs) {
-            //TODO implement
-            return null;
+            return new SetKeyCommand(env, commandArgs);
         }
     },
     GET_KEY {
         @Override
         public DatabaseCommand getCommand(ExecutionEnvironment env, List<RespObject> commandArgs) {
-            //TODO implement
-            return null;
+            return new GetKeyCommand(env, commandArgs);
         }
     },
     DELETE_KEY {
         @Override
         public DatabaseCommand getCommand(ExecutionEnvironment env, List<RespObject> commandArgs) {
-            //TODO implement
-            return null;
+            return new DeleteKeyCommand(env, commandArgs);
         }
     };
 

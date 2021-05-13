@@ -5,20 +5,21 @@ import com.itmo.java.protocol.model.RespBulkString;
 import com.itmo.java.protocol.model.RespObject;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 /**
  * Результат успешной команды
  */
 public class SuccessDatabaseCommandResult implements DatabaseCommandResult {
-    private final String payload;
+    private final byte[] payload;
 
     public SuccessDatabaseCommandResult(byte[] payload) {
-        this.payload = new String(payload, StandardCharsets.UTF_8);
+        this.payload = payload;
     }
 
     @Override
     public String getPayLoad() {
-        return payload;
+        return new String(payload);
     }
 
     @Override
@@ -31,7 +32,6 @@ public class SuccessDatabaseCommandResult implements DatabaseCommandResult {
      */
     @Override
     public RespObject serialize() {
-        //TODO implement
-        return null;
+        return new RespBulkString(payload);
     }
 }
