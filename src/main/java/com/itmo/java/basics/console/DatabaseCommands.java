@@ -47,7 +47,7 @@ public enum DatabaseCommands {
     },
     DELETE_KEY {
         @Override
-        public DatabaseCommand getCommand(ExecutionEnvironment env, List<RespObject> commandArgs) {
+        public DeleteKeyCommand getCommand(ExecutionEnvironment env, List<RespObject> commandArgs) {
             return new DeleteKeyCommand(env, commandArgs);
         }
     };

@@ -35,6 +35,6 @@ public class FailedDatabaseCommandResult implements DatabaseCommandResult {
      */
     @Override
     public RespObject serialize() {
-        return new RespBulkString(payload);
+        return new RespError(payload);
     }
 }
