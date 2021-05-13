@@ -19,7 +19,7 @@ public class SuccessDatabaseCommandResult implements DatabaseCommandResult {
 
     @Override
     public String getPayLoad() {
-        return payload.map(Object::toString).orElse(null);
+        return payload.map(String::new).orElse(null);
     }
 
     @Override
