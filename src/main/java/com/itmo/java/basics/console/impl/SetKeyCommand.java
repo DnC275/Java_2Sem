@@ -33,7 +33,7 @@ public class SetKeyCommand implements DatabaseCommand {
      */
     public SetKeyCommand(ExecutionEnvironment env, List<RespObject> commandArgs) {
         if (commandArgs.size() != 6){
-            throw new IllegalArgumentException("Message"); //TODO
+            throw new IllegalArgumentException(String.format("Incorrect number of arguments. expected: '%d', but was: %d", 6, commandArgs.size()));
         }
         this.environment = env;
         this.objects = new LinkedList<>(commandArgs);
@@ -53,7 +53,7 @@ public class SetKeyCommand implements DatabaseCommand {
             String value = objects.get(DatabaseCommandArgPositions.VALUE.getPositionIndex()).asString();
             Optional<Database> database = environment.getDatabase(databaseName);
             if (database.isEmpty()){
-                throw new DatabaseException("Message"); //TODO
+                throw new DatabaseException(String.format("Non-existent database named %s", databaseName));
             }
             database.get().write(tableName, key, value.getBytes(StandardCharsets.UTF_8));
             return DatabaseCommandResult.success(String.format("Value of key '%s' was set successfully", key).getBytes(StandardCharsets.UTF_8));

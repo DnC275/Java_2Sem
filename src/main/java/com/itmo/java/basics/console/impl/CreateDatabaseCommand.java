@@ -35,7 +35,7 @@ public class CreateDatabaseCommand implements DatabaseCommand {
      */
     public CreateDatabaseCommand(ExecutionEnvironment env, DatabaseFactory factory, List<RespObject> commandArgs) {
         if (commandArgs.size() != 3){
-            throw new IllegalArgumentException("Message"); //TODO
+            throw new IllegalArgumentException(String.format("Incorrect number of arguments. expected: '%d', but was: %d", 3, commandArgs.size()));
         }
         this.environment = env;
         this.factory = factory;

@@ -33,7 +33,7 @@ public class DeleteKeyCommand implements DatabaseCommand {
      */
     public DeleteKeyCommand(ExecutionEnvironment env, List<RespObject> commandArgs) {
         if (commandArgs.size() != 5){
-            throw new IllegalArgumentException("Message"); //TODO
+            throw new IllegalArgumentException(String.format("Incorrect number of arguments. expected: '%d', but was: %d", 5, commandArgs.size()));
         }
         this.environment = env;
         this.objects = new LinkedList<>(commandArgs);
@@ -52,7 +52,7 @@ public class DeleteKeyCommand implements DatabaseCommand {
             String key = objects.get(DatabaseCommandArgPositions.KEY.getPositionIndex()).asString();
             Optional<Database> database = environment.getDatabase(databaseName);
             if (database.isEmpty()){
-                throw new DatabaseException("Message"); //TODO
+                throw new DatabaseException(String.format("Non-existent database named %s", databaseName));
             }
             database.get().delete(tableName, key);
             return DatabaseCommandResult.success(String.

@@ -32,7 +32,7 @@ public class CreateTableCommand implements DatabaseCommand {
      */
     public CreateTableCommand(ExecutionEnvironment env, List<RespObject> commandArgs) {
         if (commandArgs.size() != 4){
-            throw new IllegalArgumentException("Message"); //TODO
+            throw new IllegalArgumentException(String.format("Incorrect number of arguments. expected: '%d', but was: %d", 4, commandArgs.size()));
         }
         this.environment = env;
         this.objects = new LinkedList<>(commandArgs);
@@ -50,7 +50,7 @@ public class CreateTableCommand implements DatabaseCommand {
             String tableName = objects.get(DatabaseCommandArgPositions.TABLE_NAME.getPositionIndex()).asString();
             Optional<Database> database = environment.getDatabase(databaseName);
             if (database.isEmpty()){
-                throw new DatabaseException("Message"); //TODO
+                throw new DatabaseException(String.format("Non-existent database named %s", databaseName));
             }
             database.get().createTableIfNotExists(tableName);
             return DatabaseCommandResult.success(String.
