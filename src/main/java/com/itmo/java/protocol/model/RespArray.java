@@ -40,7 +40,6 @@ public class RespArray implements RespObject {
      */
     @Override
     public String asString() {
-        //TODO Change it
         StringBuilder builder = new StringBuilder();
         for (RespObject object:
              objects) {
