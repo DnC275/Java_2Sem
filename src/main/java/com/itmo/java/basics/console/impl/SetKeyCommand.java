@@ -18,6 +18,7 @@ import java.util.Optional;
  * Команда для создания записи значения
  */
 public class SetKeyCommand implements DatabaseCommand {
+    private static final int OBJECTS_COUNT = 6;
     private final ExecutionEnvironment environment;
     private final List<RespObject> objects;
 
@@ -32,8 +33,8 @@ public class SetKeyCommand implements DatabaseCommand {
      * @throws IllegalArgumentException если передано неправильное количество аргументов
      */
     public SetKeyCommand(ExecutionEnvironment env, List<RespObject> commandArgs) {
-        if (commandArgs.size() != 6){
-            throw new IllegalArgumentException(String.format("Incorrect number of arguments. expected: '%d', but was: %d", 6, commandArgs.size()));
+        if (commandArgs.size() != OBJECTS_COUNT) {
+            throw new IllegalArgumentException(String.format("Incorrect number of arguments. expected: '%d', but was: %d", OBJECTS_COUNT, commandArgs.size()));
         }
         this.environment = env;
         this.objects = new LinkedList<>(commandArgs);

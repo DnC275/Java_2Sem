@@ -17,6 +17,7 @@ import java.util.List;
  * Команда для создания базы данных
  */
 public class CreateDatabaseCommand implements DatabaseCommand {
+    private static final int OBJECTS_COUNT = 3;
     private final ExecutionEnvironment environment;
     private final DatabaseFactory factory;
     private final List<RespObject> objects;
@@ -34,8 +35,8 @@ public class CreateDatabaseCommand implements DatabaseCommand {
      * @throws IllegalArgumentException если передано неправильное количество аргументов
      */
     public CreateDatabaseCommand(ExecutionEnvironment env, DatabaseFactory factory, List<RespObject> commandArgs) {
-        if (commandArgs.size() != 3){
-            throw new IllegalArgumentException(String.format("Incorrect number of arguments. expected: '%d', but was: %d", 3, commandArgs.size()));
+        if (commandArgs.size() != OBJECTS_COUNT) {
+            throw new IllegalArgumentException(String.format("Incorrect number of arguments. expected: '%d', but was: %d", OBJECTS_COUNT, commandArgs.size()));
         }
         this.environment = env;
         this.factory = factory;

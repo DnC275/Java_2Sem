@@ -40,14 +40,12 @@ public class RespArray implements RespObject {
      */
     @Override
     public String asString() {
-        StringBuilder builder = new StringBuilder();
+        LinkedList<CharSequence> stringObjects = new LinkedList<>();
         for (RespObject object:
              objects) {
-            builder.append(object.asString());
-            builder.append(" ");
+            stringObjects.add(object.asString());
         }
-        builder.deleteCharAt(builder.length() - 1);
-        return builder.toString();
+        return String.join(" ", stringObjects);
     }
 
     @Override

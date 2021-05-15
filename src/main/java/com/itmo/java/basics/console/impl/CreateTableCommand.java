@@ -17,6 +17,7 @@ import java.util.Optional;
  * Команда для создания базы таблицы
  */
 public class CreateTableCommand implements DatabaseCommand {
+    private static final int OBJECTS_COUNT = 4;
     private final ExecutionEnvironment environment;
     private final List<RespObject> objects;
 
@@ -31,8 +32,8 @@ public class CreateTableCommand implements DatabaseCommand {
      * @throws IllegalArgumentException если передано неправильное количество аргументов
      */
     public CreateTableCommand(ExecutionEnvironment env, List<RespObject> commandArgs) {
-        if (commandArgs.size() != 4){
-            throw new IllegalArgumentException(String.format("Incorrect number of arguments. expected: '%d', but was: %d", 4, commandArgs.size()));
+        if (commandArgs.size() != OBJECTS_COUNT) {
+            throw new IllegalArgumentException(String.format("Incorrect number of arguments. expected: '%d', but was: %d", OBJECTS_COUNT, commandArgs.size()));
         }
         this.environment = env;
         this.objects = new LinkedList<>(commandArgs);

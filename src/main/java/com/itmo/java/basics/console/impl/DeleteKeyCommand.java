@@ -17,6 +17,7 @@ import java.util.Optional;
  * Команда для создания удаления значения по ключу
  */
 public class DeleteKeyCommand implements DatabaseCommand {
+    private static final int OBJECTS_COUNT = 5;
     private final ExecutionEnvironment environment;
     private final List<RespObject> objects;
 
@@ -32,8 +33,8 @@ public class DeleteKeyCommand implements DatabaseCommand {
      * @throws IllegalArgumentException если передано неправильное количество аргументов
      */
     public DeleteKeyCommand(ExecutionEnvironment env, List<RespObject> commandArgs) {
-        if (commandArgs.size() != 5){
-            throw new IllegalArgumentException(String.format("Incorrect number of arguments. expected: '%d', but was: %d", 5, commandArgs.size()));
+        if (commandArgs.size() != OBJECTS_COUNT) {
+            throw new IllegalArgumentException(String.format("Incorrect number of arguments. expected: '%d', but was: %d", OBJECTS_COUNT, commandArgs.size()));
         }
         this.environment = env;
         this.objects = new LinkedList<>(commandArgs);
