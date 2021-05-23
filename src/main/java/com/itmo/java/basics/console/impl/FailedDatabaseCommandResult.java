@@ -4,13 +4,18 @@ import com.itmo.java.basics.console.DatabaseCommandResult;
 import com.itmo.java.protocol.model.RespError;
 import com.itmo.java.protocol.model.RespObject;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
+
 /**
  * Зафейленная команда
  */
 public class FailedDatabaseCommandResult implements DatabaseCommandResult {
+    private final Optional<byte[]> payload;
 
     public FailedDatabaseCommandResult(String payload) {
-        //TODO implement
+        Optional<String> payloadAsString = Optional.ofNullable(payload);
+        this.payload = payloadAsString.isPresent() ? Optional.of(payload.getBytes(StandardCharsets.UTF_8)) : Optional.empty();
     }
 
     /**
@@ -18,8 +23,7 @@ public class FailedDatabaseCommandResult implements DatabaseCommandResult {
      */
     @Override
     public String getPayLoad() {
-        //TODO implement
-        return null;
+        return payload.map(String::new).orElse(null);
     }
 
     @Override
@@ -32,7 +36,6 @@ public class FailedDatabaseCommandResult implements DatabaseCommandResult {
      */
     @Override
     public RespObject serialize() {
-        //TODO implement
-        return null;
+        return new RespError(payload.orElse(null));
     }
 }

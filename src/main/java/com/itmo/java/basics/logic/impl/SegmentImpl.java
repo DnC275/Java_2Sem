@@ -54,6 +54,11 @@ public class SegmentImpl implements Segment {
     }
 
     static String createSegmentName(String tableName) {
+        try {
+            Thread.sleep(1);
+        } catch (Exception e) {
+            throw new RuntimeException("Unknown error while creating segment name");
+        }
         return tableName + "_" + System.currentTimeMillis();
     }
 

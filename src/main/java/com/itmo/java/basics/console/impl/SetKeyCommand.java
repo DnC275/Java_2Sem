@@ -4,15 +4,23 @@ import com.itmo.java.basics.console.DatabaseCommand;
 import com.itmo.java.basics.console.DatabaseCommandArgPositions;
 import com.itmo.java.basics.console.DatabaseCommandResult;
 import com.itmo.java.basics.console.ExecutionEnvironment;
+import com.itmo.java.basics.exceptions.DatabaseException;
+import com.itmo.java.basics.logic.Database;
 import com.itmo.java.protocol.model.RespObject;
 
+import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 
 /**
  * Команда для создания записи значения
  */
 public class SetKeyCommand implements DatabaseCommand {
+    private static final int OBJECTS_COUNT = 6;
+    private final ExecutionEnvironment environment;
+    private final List<RespObject> objects;
 
     /**
      * Создает команду.
@@ -25,7 +33,11 @@ public class SetKeyCommand implements DatabaseCommand {
      * @throws IllegalArgumentException если передано неправильное количество аргументов
      */
     public SetKeyCommand(ExecutionEnvironment env, List<RespObject> commandArgs) {
-        //TODO implement
+        if (commandArgs.size() != OBJECTS_COUNT) {
+            throw new IllegalArgumentException(String.format("Incorrect number of arguments. expected: '%d', but was: %d", OBJECTS_COUNT, commandArgs.size()));
+        }
+        this.environment = env;
+        this.objects = new LinkedList<>(commandArgs);
     }
 
     /**
@@ -35,7 +47,20 @@ public class SetKeyCommand implements DatabaseCommand {
      */
     @Override
     public DatabaseCommandResult execute() {
-        //TODO implement
-        return null;
+        try {
+            String databaseName = objects.get(DatabaseCommandArgPositions.DATABASE_NAME.getPositionIndex()).asString();
+            String tableName = objects.get(DatabaseCommandArgPositions.TABLE_NAME.getPositionIndex()).asString();
+            String key = objects.get(DatabaseCommandArgPositions.KEY.getPositionIndex()).asString();
+            String value = objects.get(DatabaseCommandArgPositions.VALUE.getPositionIndex()).asString();
+            Optional<Database> database = environment.getDatabase(databaseName);
+            if (database.isEmpty()){
+                throw new DatabaseException(String.format("Non-existent database named %s", databaseName));
+            }
+            database.get().write(tableName, key, value.getBytes(StandardCharsets.UTF_8));
+            return DatabaseCommandResult.success(String.format("Value of key '%s' was set successfully", key).getBytes(StandardCharsets.UTF_8));
+        }
+        catch(DatabaseException e){
+            return new FailedDatabaseCommandResult(e.getMessage());
+        }
     }
 }

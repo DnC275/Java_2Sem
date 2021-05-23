@@ -7,6 +7,7 @@ import java.io.OutputStream;
  * Id
  */
 public class RespCommandId implements RespObject {
+    private final int commandId;
 
     /**
      * Код объекта
@@ -14,7 +15,7 @@ public class RespCommandId implements RespObject {
     public static final byte CODE = '!';
 
     public RespCommandId(int commandId) {
-        //TODO implement
+        this.commandId = commandId;
     }
 
     /**
@@ -29,12 +30,20 @@ public class RespCommandId implements RespObject {
 
     @Override
     public String asString() {
-        //TODO implement
-        return null;
+        return Integer.toString(commandId);
     }
 
     @Override
     public void write(OutputStream os) throws IOException {
-        //TODO implement
+        os.write(CODE);
+        writeInt(commandId, os);
+        os.write(CRLF);
+    }
+
+    private void writeInt(int value, OutputStream os) throws IOException{
+        os.write(value >>> 24 & 255);
+        os.write(value >>> 16 & 255);
+        os.write(value >>> 8 & 255);
+        os.write(value & 255);
     }
 }
