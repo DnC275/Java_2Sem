@@ -20,9 +20,9 @@ public class DatabaseServer {
     }
 
     /**
-     * Con structor
+     * Конструктор
      *
-     * @param env         env для инициализации. Далее работа происходит с заполненым объектом
+     * @param env         env для инициализации. Далее работа происходит с заполненным объектом
      * @param initializer готовый чейн инициализации
      * @throws DatabaseException если произошла ошибка инициализации
      */
@@ -41,5 +41,10 @@ public class DatabaseServer {
 
     public CompletableFuture<DatabaseCommandResult> executeNextCommand(DatabaseCommand command) {
         return CompletableFuture.supplyAsync(command::execute, executorService);
+    }
+
+    public ExecutionEnvironment getEnv() {
+        //TODO implement
+        return null;
     }
 }
