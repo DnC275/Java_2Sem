@@ -41,7 +41,7 @@ public class ConfigLoader {
         try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(configFileName)){
             properties.load(inputStream);
         }
-        catch (IOException e) {
+        catch (IOException | NullPointerException e) {
             properties = defaults;
         }
         databaseServerConfigBuilder.dbConfig(new DatabaseConfig(properties.getProperty("kvs.workingPath")));
