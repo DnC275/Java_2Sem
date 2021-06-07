@@ -10,9 +10,10 @@ import com.itmo.java.protocol.model.RespObject;
  * С помощью {@link RespWriter} и {@link RespReader} читает/пишет в сокет
  */
 public class SocketKvsConnection implements KvsConnection {
+    ConnectionConfig connectionConfig;
 
     public SocketKvsConnection(ConnectionConfig config) {
-        //TODO implement
+        this.connectionConfig = config;
     }
 
     /**
@@ -23,7 +24,7 @@ public class SocketKvsConnection implements KvsConnection {
      */
     @Override
     public synchronized RespObject send(int commandId, RespArray command) throws ConnectionException {
-        //TODO implement
+        //TODO
         return null;
     }
 

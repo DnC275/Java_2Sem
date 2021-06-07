@@ -1,16 +1,21 @@
 package com.itmo.java.protocol;
 
+import com.itmo.java.basics.logic.io.DatabaseInputStream;
 import com.itmo.java.protocol.model.RespArray;
 import com.itmo.java.protocol.model.RespBulkString;
 import com.itmo.java.protocol.model.RespCommandId;
 import com.itmo.java.protocol.model.RespError;
 import com.itmo.java.protocol.model.RespObject;
 
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
 
 public class RespReader implements AutoCloseable {
+    private Scanner scanner;
+//    private DataInputStream dataInputStream;
 
     /**
      * Специальные символы окончания элемента
@@ -19,15 +24,23 @@ public class RespReader implements AutoCloseable {
     private static final byte LF = '\n';
 
     public RespReader(InputStream is) {
-        //TODO implement
+        this.scanner = new Scanner(is);
+//        this.dataInputStream = new DatabaseInputStream(is);
     }
 
     /**
      * Есть ли следующий массив в стриме?
      */
     public boolean hasArray() throws IOException {
-        //TODO implement
-        return false;
+        String str = new String("*");
+        return scanner.hasNext(str);
+//        try {
+//            byte check = dataInputStream.readByte();
+//            return check == '*';
+//        }
+//        catch (EOFException e) {
+//            return false;
+//        }
     }
 
     /**
@@ -38,7 +51,15 @@ public class RespReader implements AutoCloseable {
      * @throws IOException  при ошибке чтения
      */
     public RespObject readObject() throws IOException {
-        //TODO implement
+        if (scanner.hasNext("-")) {
+            return readError();
+        }
+        if (scanner.hasNext("$")) {
+            return readBulkString();
+        }
+        if (scanner.hasNext("!")) {
+            return readCommandId();
+        }
         return null;
     }
 
@@ -49,8 +70,28 @@ public class RespReader implements AutoCloseable {
      * @throws IOException  при ошибке чтения
      */
     public RespError readError() throws IOException {
-        //TODO implement
-        return null;
+        List<Byte> message = new ArrayList<>();
+        byte b = scanner.nextByte();
+        while (true) {
+            if (b != CR) {
+                message.add(b);
+                b = scanner.nextByte();
+            } else {
+                b = scanner.nextByte();
+                if (b == LF) {
+                    break;
+                }
+                message.add(CR);
+            }
+        }
+        byte[] result = new byte[message.size()];
+        int i = 0;
+        for (Byte character :
+             message) {
+            result[i++] = character;
+        }
+        return new RespError(result);
+
     }
 
     /**
@@ -60,7 +101,9 @@ public class RespReader implements AutoCloseable {
      * @throws IOException  при ошибке чтения
      */
     public RespBulkString readBulkString() throws IOException {
-        //TODO implement
+        int size = scanner.nextInt();
+        scanner.next();
+        scanner.next();
         return null;
     }
 
