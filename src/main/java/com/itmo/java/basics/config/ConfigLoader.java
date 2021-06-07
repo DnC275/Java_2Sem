@@ -36,20 +36,20 @@ public class ConfigLoader {
      * Читаются: "kvs.workingPath", "kvs.host", "kvs.port" (но в конфигурационном файле допустимы и другие проперти)
      */
     public DatabaseServerConfig readConfig() {
+        Properties defaults = getDefaultProperties();
+        DatabaseServerConfig.DatabaseServerConfigBuilder databaseServerConfigBuilder = new DatabaseServerConfig.DatabaseServerConfigBuilder();
+        String propertiesPath = getPropertiesPath();
+        Properties properties = new Properties(defaults);
         try {
-            Properties defaults = getDefaultProperties();
-            DatabaseServerConfig.DatabaseServerConfigBuilder databaseServerConfigBuilder = new DatabaseServerConfig.DatabaseServerConfigBuilder();
-            String propertiesPath = getPropertiesPath();
-            Properties properties = new Properties(defaults);
             FileInputStream fileInputStream = new FileInputStream(propertiesPath);
             properties.load(fileInputStream);
-            databaseServerConfigBuilder.dbConfig(new DatabaseConfig(properties.getProperty("kvs.workingPath")));
-            databaseServerConfigBuilder.serverConfig(new ServerConfig(properties.getProperty("kvs.host"), Integer.getInteger(properties.getProperty("kvs.port"))));
-            return DatabaseServerConfig.builder().build();
         }
         catch (IOException e) {
-            throw new RuntimeException("Something wrong with properties file");
+            properties = defaults;
         }
+        databaseServerConfigBuilder.dbConfig(new DatabaseConfig(properties.getProperty("kvs.workingPath")));
+        databaseServerConfigBuilder.serverConfig(new ServerConfig(properties.getProperty("kvs.host"), Integer.getInteger(properties.getProperty("kvs.port"))));
+        return DatabaseServerConfig.builder().build();
     }
 
     private String getPropertiesPath() {
