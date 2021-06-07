@@ -2,6 +2,7 @@ package com.itmo.java.basics.config;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.util.Properties;
@@ -11,8 +12,6 @@ import java.util.Properties;
  */
 public class ConfigLoader {
     String configFileName;
-    public final static String SEPARATOR = FileSystems.getDefault().getSeparator();
-    public final static String PATH_TO_RESOURCES = "src" + SEPARATOR + "main" + SEPARATOR + "resources";
 
     /**
      * По умолчанию читает из server.properties
@@ -38,11 +37,11 @@ public class ConfigLoader {
     public DatabaseServerConfig readConfig() {
         Properties defaults = getDefaultProperties();
         DatabaseServerConfig.DatabaseServerConfigBuilder databaseServerConfigBuilder = new DatabaseServerConfig.DatabaseServerConfigBuilder();
-        String propertiesPath = getPropertiesPath();
         Properties properties = new Properties(defaults);
-        try {
-            FileInputStream fileInputStream = new FileInputStream(propertiesPath);
+        try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(configFileName);
+             FileInputStream fileInputStream = new FileInputStream(configFileName)){
             properties.load(fileInputStream);
+            properties.load(inputStream);
         }
         catch (IOException e) {
             properties = defaults;
@@ -50,10 +49,6 @@ public class ConfigLoader {
         databaseServerConfigBuilder.dbConfig(new DatabaseConfig(properties.getProperty("kvs.workingPath")));
         databaseServerConfigBuilder.serverConfig(new ServerConfig(properties.getProperty("kvs.host"), Integer.parseInt(properties.getProperty("kvs.port"))));
         return DatabaseServerConfig.builder().build();
-    }
-
-    private String getPropertiesPath() {
-        return PATH_TO_RESOURCES + SEPARATOR + configFileName;
     }
 
     private Properties getDefaultProperties() {
