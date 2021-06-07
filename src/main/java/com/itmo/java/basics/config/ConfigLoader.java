@@ -48,7 +48,7 @@ public class ConfigLoader {
             properties = defaults;
         }
         databaseServerConfigBuilder.dbConfig(new DatabaseConfig(properties.getProperty("kvs.workingPath")));
-        databaseServerConfigBuilder.serverConfig(new ServerConfig(properties.getProperty("kvs.host"), Integer.getInteger(properties.getProperty("kvs.port"))));
+        databaseServerConfigBuilder.serverConfig(new ServerConfig(properties.getProperty("kvs.host"), Integer.parseInt(properties.getProperty("kvs.port"))));
         return DatabaseServerConfig.builder().build();
     }
 
