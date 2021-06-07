@@ -38,9 +38,7 @@ public class ConfigLoader {
         Properties defaults = getDefaultProperties();
         DatabaseServerConfig.DatabaseServerConfigBuilder databaseServerConfigBuilder = new DatabaseServerConfig.DatabaseServerConfigBuilder();
         Properties properties = new Properties(defaults);
-        try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(configFileName);
-             FileInputStream fileInputStream = new FileInputStream(configFileName)){
-            properties.load(fileInputStream);
+        try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(configFileName)){
             properties.load(inputStream);
         }
         catch (IOException e) {
