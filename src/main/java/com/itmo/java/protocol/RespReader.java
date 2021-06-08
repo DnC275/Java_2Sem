@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class RespReader implements AutoCloseable {
-    private Scanner scanner;
+    private InputStream is;
 //    private DataInputStream dataInputStream;
 
     /**
@@ -24,7 +24,7 @@ public class RespReader implements AutoCloseable {
     private static final byte LF = '\n';
 
     public RespReader(InputStream is) {
-        this.scanner = new Scanner(is);
+        this.is = is;
 //        this.dataInputStream = new DatabaseInputStream(is);
     }
 
@@ -32,15 +32,7 @@ public class RespReader implements AutoCloseable {
      * Есть ли следующий массив в стриме?
      */
     public boolean hasArray() throws IOException {
-        String str = new String("*");
-        return scanner.hasNext(str);
-//        try {
-//            byte check = dataInputStream.readByte();
-//            return check == '*';
-//        }
-//        catch (EOFException e) {
-//            return false;
-//        }
+        return getFirstByte() == RespArray.CODE;
     }
 
     /**
@@ -51,16 +43,19 @@ public class RespReader implements AutoCloseable {
      * @throws IOException  при ошибке чтения
      */
     public RespObject readObject() throws IOException {
-        if (scanner.hasNext("-")) {
-            return readError();
+        byte firstByte = getFirstByte();
+        switch (firstByte) {
+            case RespCommandId.CODE:
+                return readCommandId();
+            case RespBulkString.CODE:
+                return readBulkString();
+            case RespArray.CODE:
+                return readArray();
+            case RespError.CODE:
+                return readError();
+            default:
+                throw new IOException(""); //TODO
         }
-        if (scanner.hasNext("$")) {
-            return readBulkString();
-        }
-        if (scanner.hasNext("!")) {
-            return readCommandId();
-        }
-        return null;
     }
 
     /**
@@ -71,14 +66,17 @@ public class RespReader implements AutoCloseable {
      */
     public RespError readError() throws IOException {
         List<Byte> message = new ArrayList<>();
-        byte b = scanner.nextByte();
+        byte b = (byte) is.read();
         while (true) {
             if (b != CR) {
                 message.add(b);
-                b = scanner.nextByte();
-            } else {
-                b = scanner.nextByte();
+                b = (byte) is.read();
+            }
+            else {
+                b = (byte) is.read();
                 if (b == LF) {
+                    message.add(CR);
+                    message.add(LF);
                     break;
                 }
                 message.add(CR);
@@ -86,12 +84,9 @@ public class RespReader implements AutoCloseable {
         }
         byte[] result = new byte[message.size()];
         int i = 0;
-        for (Byte character :
-             message) {
+        for (Byte character : message)
             result[i++] = character;
-        }
         return new RespError(result);
-
     }
 
     /**
@@ -101,9 +96,6 @@ public class RespReader implements AutoCloseable {
      * @throws IOException  при ошибке чтения
      */
     public RespBulkString readBulkString() throws IOException {
-        int size = scanner.nextInt();
-        scanner.next();
-        scanner.next();
         return null;
     }
 
@@ -133,5 +125,15 @@ public class RespReader implements AutoCloseable {
     @Override
     public void close() throws IOException {
         //TODO implement
+    }
+
+    private byte getFirstByte() throws IOException {
+        PushbackInputStream pushbackInputStream = new PushbackInputStream(is);
+        byte firstByte = (byte) pushbackInputStream.read();
+        if (firstByte != -1) {
+            throw new EOFException(""); //TODO
+        }
+        pushbackInputStream.unread(1);
+        return firstByte;
     }
 }
