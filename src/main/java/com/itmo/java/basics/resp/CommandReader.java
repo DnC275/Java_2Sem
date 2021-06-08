@@ -28,7 +28,7 @@ public class CommandReader implements AutoCloseable {
      * @throws IllegalArgumentException если нет имени команды и id
      */
     public DatabaseCommand readCommand() throws IOException {
-        reader.readArray().getObjects()
+        reader.readArray().getObjects();
         return null;
     }
 
