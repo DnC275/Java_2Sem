@@ -130,7 +130,7 @@ public class RespReader implements AutoCloseable {
     private byte getFirstByte() throws IOException {
         PushbackInputStream pushbackInputStream = new PushbackInputStream(is);
         byte firstByte = (byte) pushbackInputStream.read();
-        if (firstByte != -1) {
+        if (firstByte == -1) {
             throw new EOFException(""); //TODO
         }
         pushbackInputStream.unread(1);
