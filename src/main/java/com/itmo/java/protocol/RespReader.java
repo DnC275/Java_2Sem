@@ -75,8 +75,8 @@ public class RespReader implements AutoCloseable {
             else {
                 b = (byte) is.read();
                 if (b == LF) {
-                    message.add(CR);
-                    message.add(LF);
+//                    message.add(CR);
+//                    message.add(LF);
                     break;
                 }
                 message.add(CR);
