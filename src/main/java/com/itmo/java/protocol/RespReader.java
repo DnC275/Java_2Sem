@@ -155,21 +155,21 @@ public class RespReader implements AutoCloseable {
         try {
             List<Byte> message = new ArrayList<>();
             byte b = (byte) is.read();
-            while (true) {
-                if (b == -1)
-                    throw new EOFException(""); //TODO
-                if (b != CR) {
-                    message.add(b);
-                    b = (byte) is.read();
-                }
-                else {
-                    b = (byte) is.read();
-                    if (b == LF) {
-                        break;
-                    }
-                    message.add(CR);
-                }
-            }
+//            while (true) {
+//                if (b == -1)
+//                    throw new EOFException(""); //TODO
+//                if (b != CR) {
+//                    message.add(b);
+//                    b = (byte) is.read();
+//                }
+//                else {
+//                    b = (byte) is.read();
+//                    if (b == LF) {
+//                        break;
+//                    }
+//                    message.add(CR);
+//                }
+//            }
             byte[] result = new byte[message.size()];
             int i = 0;
             for (Byte character : message)
