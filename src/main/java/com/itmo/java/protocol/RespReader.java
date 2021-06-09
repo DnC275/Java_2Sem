@@ -65,7 +65,7 @@ public class RespReader implements AutoCloseable {
      * @throws IOException  при ошибке чтения
      */
     public RespError readError() throws IOException {
-        byte b = getNextByte();
+        byte b = (byte) is.read();
         if (b != RespError.CODE)
             throw new IOException(""); //TODO
         byte[] message = readToCRLF(is);
@@ -79,7 +79,7 @@ public class RespReader implements AutoCloseable {
      * @throws IOException  при ошибке чтения
      */
     public RespBulkString readBulkString() throws IOException {
-        byte b = getNextByte();
+        byte b = (byte) is.read();
         if (b != RespBulkString.CODE)
             throw new IOException(""); //TODO
         byte[] skipStringLenght = readToCRLF(is);
@@ -133,7 +133,7 @@ public class RespReader implements AutoCloseable {
         }
     }
 
-    public static byte[] readToCRLF(InputStream is) throws IOException {
+    private byte[] readToCRLF(InputStream is) throws IOException {
         try {
             List<Byte> message = new ArrayList<>();
             byte b = (byte) is.read();
