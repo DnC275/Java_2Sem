@@ -48,8 +48,7 @@ public class CommandReader implements AutoCloseable {
     }
 
     private boolean checkObjectsCorrectness(List<RespObject> objects) {
-        return objects.get(DatabaseCommandArgPositions.COMMAND_ID.getPositionIndex()).getClass() == RespCommandId.class &&
-                objects.get(DatabaseCommandArgPositions.COMMAND_NAME.getPositionIndex()).getClass() == RespBulkString.class &&
-                objects.size() >= 3;
+        return objects.size() >= 3 && objects.get(DatabaseCommandArgPositions.COMMAND_ID.getPositionIndex()).getClass() == RespCommandId.class &&
+                objects.get(DatabaseCommandArgPositions.COMMAND_NAME.getPositionIndex()).getClass() == RespBulkString.class;
     }
 }
