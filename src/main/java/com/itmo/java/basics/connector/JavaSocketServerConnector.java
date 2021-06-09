@@ -48,18 +48,18 @@ public class JavaSocketServerConnector implements Closeable {
      */
     public void start() {
         connectionAcceptorExecutor.submit(() -> {
-//            while (true) {
-//                try {
-//                    if (serverSocket.isClosed())
-//                        break;
-//                    Socket clientSocket = serverSocket.accept();
-//                    clientIOWorkers.submit(new ClientTask(clientSocket, server));
-//                }
-//                catch (IOException e) {
-//                    close();
-//                    throw new RuntimeException("", e); //TODO
-//                }
-//            }
+            while (true) {
+                try {
+                    if (serverSocket.isClosed())
+                        break;
+                    Socket clientSocket = serverSocket.accept();
+                    clientIOWorkers.submit(new ClientTask(clientSocket, server));
+                }
+                catch (IOException e) {
+                    close();
+                    throw new RuntimeException("", e); //TODO
+                }
+            }
         });
     }
 
