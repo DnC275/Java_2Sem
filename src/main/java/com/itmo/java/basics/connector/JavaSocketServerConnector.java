@@ -24,15 +24,15 @@ public class JavaSocketServerConnector implements Closeable {
      */
     private final ExecutorService clientIOWorkers = Executors.newSingleThreadExecutor();
     private final ExecutorService connectionAcceptorExecutor = Executors.newSingleThreadExecutor();
-//    private final ServerSocket serverSocket;
-//    private final DatabaseServer server;
+    private final ServerSocket serverSocket;
+    private final DatabaseServer server;
 
     /**
      * Стартует сервер. По аналогии с сокетом открывает коннекшн в конструкторе.
      */
     public JavaSocketServerConnector(DatabaseServer databaseServer, ServerConfig config) throws IOException {
-//        serverSocket = new ServerSocket(config.getPort());
-//        this.server = databaseServer;
+        serverSocket = new ServerSocket(config.getPort());
+        this.server = databaseServer;
     }
  
      /**
