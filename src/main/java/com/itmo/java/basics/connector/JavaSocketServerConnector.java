@@ -3,14 +3,22 @@ package com.itmo.java.basics.connector;
 import com.itmo.java.basics.DatabaseServer;
 import com.itmo.java.basics.config.ConfigLoader;
 import com.itmo.java.basics.config.ServerConfig;
+import com.itmo.java.basics.console.DatabaseCommand;
+import com.itmo.java.basics.console.DatabaseCommandResult;
 import com.itmo.java.basics.logic.Database;
 import com.itmo.java.basics.resp.CommandReader;
+import com.itmo.java.protocol.RespReader;
 import com.itmo.java.protocol.RespWriter;
+import com.itmo.java.protocol.model.RespObject;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -81,14 +89,23 @@ public class JavaSocketServerConnector implements Closeable {
     static class ClientTask implements Runnable, Closeable {
         private final Socket client;
         private final DatabaseServer server;
+        private final InputStream is;
+        private final OutputStream os;
 
         /**
          * @param client клиентский сокет
          * @param server сервер, на котором исполняется задача
          */
         public ClientTask(Socket client, DatabaseServer server) {
-            this.client = client;
-            this.server = server;
+            try {
+                this.client = client;
+                this.server = server;
+                is = client.getInputStream();
+                os = client.getOutputStream();
+            }
+            catch (IOException e) {
+                throw new RuntimeException("", e);
+            }
         }
 
         /**
@@ -100,7 +117,18 @@ public class JavaSocketServerConnector implements Closeable {
          */
         @Override
         public void run() {
-            //TODO implement
+            try {
+                CommandReader commandReader = new CommandReader(new RespReader(is), server.getEnv());
+                DatabaseCommand command = commandReader.readCommand();
+                CompletableFuture<DatabaseCommandResult> completableResult = server.executeNextCommand(command);
+                DatabaseCommandResult result = server.executeNextCommand(command).get();
+                RespWriter writer = new RespWriter(os);
+                RespObject object = result.serialize();
+                writer.write(object);
+            }
+            catch (IOException | InterruptedException | ExecutionException e) {
+                throw new RuntimeException("", e); //TODO
+            }
         }
 
         /**
