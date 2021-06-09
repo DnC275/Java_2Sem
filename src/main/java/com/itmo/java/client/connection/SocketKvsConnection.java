@@ -25,6 +25,7 @@ public class SocketKvsConnection implements KvsConnection {
         this.connectionConfig = config;
         try {
             clientSocket = new Socket(ConnectionConfig.DEFAULT_HOST, ConnectionConfig.DEFAULT_PORT);
+
 //            is = new DataInputStream(clientSocket.getInputStream());
 //            os = new DataOutputStream(clientSocket.getOutputStream());
             is = clientSocket.getInputStream();
@@ -46,8 +47,7 @@ public class SocketKvsConnection implements KvsConnection {
         try {
             command.write(os);
             RespReader respReader = new RespReader(is);
-            RespArray respArray = respReader.readArray();
-            return respArray;
+            return respReader.readArray();
         }
         catch (IOException e) {
             throw new ConnectionException("Something wrong with connection", e);
@@ -60,8 +60,7 @@ public class SocketKvsConnection implements KvsConnection {
     @Override
     public void close() {
         try {
-            is.close();
-            os.close();
+            clientSocket.close();
         }
         catch (IOException e) {
             throw new RuntimeException("Error while closing connection");
