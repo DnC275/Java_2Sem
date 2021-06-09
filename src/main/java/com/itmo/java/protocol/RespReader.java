@@ -7,7 +7,9 @@ import com.itmo.java.protocol.model.RespCommandId;
 import com.itmo.java.protocol.model.RespError;
 import com.itmo.java.protocol.model.RespObject;
 
+import javax.xml.crypto.Data;
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,7 +26,6 @@ public class RespReader implements AutoCloseable {
 
     public RespReader(InputStream is) {
         this.pushbackInputStream = new PushbackInputStream(is);
-//        this.dataInputStream = new DatabaseInputStream(is);
     }
 
     /**
@@ -104,8 +105,14 @@ public class RespReader implements AutoCloseable {
      * @throws IOException  при ошибке чтения
      */
     public RespCommandId readCommandId() throws IOException {
-        //TODO implement
-        return null;
+        byte b = (byte) pushbackInputStream.read();
+        if (b != RespCommandId.CODE)
+            throw new IOException(""); //TODO
+        byte[] byteId = readToCRLF(pushbackInputStream);
+        if (byteId.length != 4)
+            throw new IOException(""); //TODO
+        ByteBuffer bb = ByteBuffer.wrap(byteId);
+        return new RespCommandId(bb.getInt());
     }
 
 
