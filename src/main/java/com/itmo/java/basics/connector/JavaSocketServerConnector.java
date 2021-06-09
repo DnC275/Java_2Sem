@@ -1,12 +1,15 @@
 package com.itmo.java.basics.connector;
 
 import com.itmo.java.basics.DatabaseServer;
+import com.itmo.java.basics.config.ConfigLoader;
 import com.itmo.java.basics.config.ServerConfig;
+import com.itmo.java.basics.logic.Database;
 import com.itmo.java.basics.resp.CommandReader;
 import com.itmo.java.protocol.RespWriter;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -20,14 +23,16 @@ public class JavaSocketServerConnector implements Closeable {
      * Экзекьютор для выполнения ClientTask
      */
     private final ExecutorService clientIOWorkers = Executors.newSingleThreadExecutor();
-
-//    private final ServerSocket serverSocket; // todo uncomment
     private final ExecutorService connectionAcceptorExecutor = Executors.newSingleThreadExecutor();
+    private final ServerSocket serverSocket;
+    private final DatabaseServer server;
 
     /**
      * Стартует сервер. По аналогии с сокетом открывает коннекшн в конструкторе.
      */
     public JavaSocketServerConnector(DatabaseServer databaseServer, ServerConfig config) throws IOException {
+        serverSocket = new ServerSocket(config.getPort());
+        this.server = databaseServer;
     }
  
      /**
@@ -45,7 +50,12 @@ public class JavaSocketServerConnector implements Closeable {
     @Override
     public void close() {
         System.out.println("Stopping socket connector");
-        // todo implement
+        try {
+            serverSocket.close();
+        }
+        catch (IOException e) {
+            throw new RuntimeException("", e); //TODO
+        }
     }
 
 
@@ -57,13 +67,16 @@ public class JavaSocketServerConnector implements Closeable {
      * Runnable, описывающий исполнение клиентской команды.
      */
     static class ClientTask implements Runnable, Closeable {
+        private final Socket client;
+        private final DatabaseServer server;
 
         /**
          * @param client клиентский сокет
          * @param server сервер, на котором исполняется задача
          */
         public ClientTask(Socket client, DatabaseServer server) {
-            //TODO implement
+            this.client = client;
+            this.server = server;
         }
 
         /**
@@ -83,7 +96,12 @@ public class JavaSocketServerConnector implements Closeable {
          */
         @Override
         public void close() {
-            //TODO implement
+            try {
+                client.close();
+            }
+            catch (IOException e) {
+                throw new RuntimeException("", e); //TODO
+            }
         }
     }
 }
