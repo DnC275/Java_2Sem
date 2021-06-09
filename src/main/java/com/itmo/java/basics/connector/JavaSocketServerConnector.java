@@ -80,7 +80,7 @@ public class JavaSocketServerConnector implements Closeable {
 
 
     public static void main(String[] args) throws Exception {
-        // можнно запускать прямо здесь
+        //TODO
     }
 
     /**
@@ -120,7 +120,6 @@ public class JavaSocketServerConnector implements Closeable {
             try {
                 CommandReader commandReader = new CommandReader(new RespReader(is), server.getEnv());
                 DatabaseCommand command = commandReader.readCommand();
-                CompletableFuture<DatabaseCommandResult> completableResult = server.executeNextCommand(command);
                 DatabaseCommandResult result = server.executeNextCommand(command).get();
                 RespWriter writer = new RespWriter(os);
                 RespObject object = result.serialize();
