@@ -32,7 +32,7 @@ public class RespReader implements AutoCloseable {
      * Есть ли следующий массив в стриме?
      */
     public boolean hasArray() throws IOException {
-        return getFirstByte() == RespArray.CODE;
+        return getNextByte() == RespArray.CODE;
     }
 
     /**
@@ -43,8 +43,8 @@ public class RespReader implements AutoCloseable {
      * @throws IOException  при ошибке чтения
      */
     public RespObject readObject() throws IOException {
-        byte firstByte = getFirstByte();
-        switch (firstByte) {
+        byte b = getNextByte();
+        switch (b) {
             case RespCommandId.CODE:
                 return readCommandId();
             case RespBulkString.CODE:
@@ -65,28 +65,11 @@ public class RespReader implements AutoCloseable {
      * @throws IOException  при ошибке чтения
      */
     public RespError readError() throws IOException {
-        List<Byte> message = new ArrayList<>();
-        byte b = (byte) is.read();
-        while (true) {
-            if (b != CR) {
-                message.add(b);
-                b = (byte) is.read();
-            }
-            else {
-                b = (byte) is.read();
-                if (b == LF) {
-//                    message.add(CR);
-//                    message.add(LF);
-                    break;
-                }
-                message.add(CR);
-            }
-        }
-        byte[] result = new byte[message.size()];
-        int i = 0;
-        for (Byte character : message)
-            result[i++] = character;
-        return new RespError(result);
+        byte b = getNextByte();
+        if (b != RespError.CODE)
+            throw new IOException(""); //TODO
+        byte[] message = readToCRLF(is);
+        return new RespError(message);
     }
 
     /**
@@ -96,7 +79,12 @@ public class RespReader implements AutoCloseable {
      * @throws IOException  при ошибке чтения
      */
     public RespBulkString readBulkString() throws IOException {
-        return null;
+        byte b = getNextByte();
+        if (b != RespBulkString.CODE)
+            throw new IOException(""); //TODO
+        byte[] skipStringLenght = readToCRLF(is);
+        byte[] message = readToCRLF(is);
+        return new RespBulkString(message);
     }
 
     /**
@@ -124,16 +112,56 @@ public class RespReader implements AutoCloseable {
 
     @Override
     public void close() throws IOException {
-        //TODO implement
+        is.close();
     }
 
-    private byte getFirstByte() throws IOException {
-        PushbackInputStream pushbackInputStream = new PushbackInputStream(is);
-        byte firstByte = (byte) pushbackInputStream.read();
-        if (firstByte == -1) {
-            throw new EOFException(""); //TODO
+    private byte getNextByte() throws IOException {
+        try {
+            PushbackInputStream pushbackInputStream = new PushbackInputStream(is);
+            byte b = (byte) pushbackInputStream.read();
+            if (b == -1) {
+                throw new EOFException(""); //TODO
+            }
+            pushbackInputStream.unread(b);
+            return b;
         }
-        pushbackInputStream.unread(1);
-        return firstByte;
+        catch (EOFException e) {
+            throw e;
+        }
+        catch (IOException e) {
+            throw new IOException("", e);
+        }
+    }
+
+    public static byte[] readToCRLF(InputStream is) throws IOException {
+        try {
+            List<Byte> message = new ArrayList<>();
+            byte b = (byte) is.read();
+            while (true) {
+                if (b == -1)
+                    throw new EOFException(""); //TODO
+                if (b != CR) {
+                    message.add(b);
+                    b = (byte) is.read();
+                } else {
+                    b = (byte) is.read();
+                    if (b == LF) {
+                        break;
+                    }
+                    message.add(CR);
+                }
+            }
+            byte[] result = new byte[message.size()];
+            int i = 0;
+            for (Byte character : message)
+                result[i++] = character;
+            return result;
+        }
+        catch (EOFException e) {
+            throw e;
+        }
+        catch (IOException e) {
+            throw new IOException("", e); //TODO
+        }
     }
 }
