@@ -24,8 +24,8 @@ public class JavaSocketServerConnector implements Closeable {
      */
     private final ExecutorService clientIOWorkers = Executors.newSingleThreadExecutor();
     private final ExecutorService connectionAcceptorExecutor = Executors.newSingleThreadExecutor();
-    private final ServerSocket serverSocket;
-    private final DatabaseServer server;
+//    private final ServerSocket serverSocket;
+//    private final DatabaseServer server;
 
     /**
      * Стартует сервер. По аналогии с сокетом открывает коннекшн в конструкторе.
