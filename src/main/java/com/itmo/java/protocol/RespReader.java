@@ -14,7 +14,8 @@ import java.util.List;
 import java.util.Scanner;
 
 public class RespReader implements AutoCloseable {
-    private InputStream is;
+//    private InputStream is;
+    private PushbackInputStream is;
 //    private DataInputStream dataInputStream;
 
     /**
@@ -24,7 +25,7 @@ public class RespReader implements AutoCloseable {
     private static final byte LF = '\n';
 
     public RespReader(InputStream is) {
-        this.is = is;
+        this.is = new PushbackInputStream(is);
 //        this.dataInputStream = new DatabaseInputStream(is);
     }
 
@@ -117,12 +118,12 @@ public class RespReader implements AutoCloseable {
 
     private byte getNextByte() throws IOException {
         try {
-            PushbackInputStream pushbackInputStream = new PushbackInputStream(is);
-            byte b = (byte) pushbackInputStream.read();
+//            PushbackInputStream pushbackInputStream = new PushbackInputStream(is);
+            byte b = (byte) is.read();
             if (b == -1) {
                 throw new EOFException(""); //TODO
             }
-            pushbackInputStream.unread(b);
+            is.unread(b);
             return b;
         }
         catch (EOFException e) {
