@@ -24,8 +24,7 @@ public class SocketKvsConnection implements KvsConnection {
     public SocketKvsConnection(ConnectionConfig config) {
         this.connectionConfig = config;
         try {
-            clientSocket = new Socket(ConnectionConfig.DEFAULT_HOST, ConnectionConfig.DEFAULT_PORT);
-
+            clientSocket = new Socket(connectionConfig.getHost(), connectionConfig.getPort());
 //            is = new DataInputStream(clientSocket.getInputStream());
 //            os = new DataOutputStream(clientSocket.getOutputStream());
             is = clientSocket.getInputStream();
