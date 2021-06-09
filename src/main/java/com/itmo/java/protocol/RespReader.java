@@ -82,8 +82,14 @@ public class RespReader implements AutoCloseable {
         byte b = (byte) pushbackInputStream.read();
         if (b != RespBulkString.CODE)
             throw new IOException(""); //TODO
-        byte[] skipStringLenght = readToCRLF(pushbackInputStream);
+        int length = Integer.parseInt(new String(readToCRLF(pushbackInputStream)));
+        if (length == -1) {
+            return RespBulkString.NULL_STRING;
+        }
         byte[] message = readToCRLF(pushbackInputStream);
+        if (message.length != length) {
+            throw new IOException(""); //TODO
+        }
         return new RespBulkString(message);
     }
 
@@ -94,8 +100,15 @@ public class RespReader implements AutoCloseable {
      * @throws IOException  при ошибке чтения
      */
     public RespArray readArray() throws IOException {
-        //TODO implement
-        return null;
+        byte b = (byte) pushbackInputStream.read();
+        if (b != RespArray.CODE)
+            throw new IOException(""); //TODO
+        int count = Integer.parseInt(new String(readToCRLF(pushbackInputStream)));
+        RespObject[] objects = new RespObject[count];
+        for (int i = 0; i < count; i++) {
+            objects[i] = readObject();
+        }
+        return new RespArray(objects);
     }
 
     /**
