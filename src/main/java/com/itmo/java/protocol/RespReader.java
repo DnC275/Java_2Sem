@@ -14,9 +14,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class RespReader implements AutoCloseable {
-    private InputStream is;
-//    private PushbackInputStream is;
-//    private DataInputStream dataInputStream;
+    private PushbackInputStream pushbackInputStream;
 
     /**
      * Специальные символы окончания элемента
@@ -25,7 +23,7 @@ public class RespReader implements AutoCloseable {
     private static final byte LF = '\n';
 
     public RespReader(InputStream is) {
-        this.is = is;
+        this.pushbackInputStream = new PushbackInputStream(is);
 //        this.dataInputStream = new DatabaseInputStream(is);
     }
 
@@ -66,10 +64,10 @@ public class RespReader implements AutoCloseable {
      * @throws IOException  при ошибке чтения
      */
     public RespError readError() throws IOException {
-        byte b = (byte) is.read();
+        byte b = (byte) pushbackInputStream.read();
         if (b != RespError.CODE)
             throw new IOException(""); //TODO
-        byte[] message = readToCRLF(is);
+        byte[] message = readToCRLF(pushbackInputStream);
         return new RespError(message);
     }
 
@@ -80,11 +78,11 @@ public class RespReader implements AutoCloseable {
      * @throws IOException  при ошибке чтения
      */
     public RespBulkString readBulkString() throws IOException {
-        byte b = (byte) is.read();
+        byte b = (byte) pushbackInputStream.read();
         if (b != RespBulkString.CODE)
             throw new IOException(""); //TODO
-        byte[] skipStringLenght = readToCRLF(is);
-        byte[] message = readToCRLF(is);
+        byte[] skipStringLenght = readToCRLF(pushbackInputStream);
+        byte[] message = readToCRLF(pushbackInputStream);
         return new RespBulkString(message);
     }
 
@@ -113,12 +111,11 @@ public class RespReader implements AutoCloseable {
 
     @Override
     public void close() throws IOException {
-        is.close();
+        pushbackInputStream.close();
     }
 
     private byte getNextByte() throws IOException {
         try {
-            PushbackInputStream pushbackInputStream = new PushbackInputStream(is);
             byte b = (byte) pushbackInputStream.read();
             if (b == -1) {
                 throw new EOFException(""); //TODO
@@ -134,7 +131,7 @@ public class RespReader implements AutoCloseable {
         }
     }
 
-    private byte[] readToCRLF(InputStream is) throws IOException {
+    public static byte[] readToCRLF(InputStream is) throws IOException {
         try {
             List<Byte> message = new ArrayList<>();
             byte b = (byte) is.read();
