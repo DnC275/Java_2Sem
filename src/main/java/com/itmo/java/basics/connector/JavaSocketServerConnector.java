@@ -31,8 +31,8 @@ public class JavaSocketServerConnector implements Closeable {
      * Стартует сервер. По аналогии с сокетом открывает коннекшн в конструкторе.
      */
     public JavaSocketServerConnector(DatabaseServer databaseServer, ServerConfig config) throws IOException {
-        serverSocket = new ServerSocket(config.getPort());
-        this.server = databaseServer;
+//        serverSocket = new ServerSocket(config.getPort());
+//        this.server = databaseServer;
     }
  
      /**
@@ -40,17 +40,18 @@ public class JavaSocketServerConnector implements Closeable {
      */
     public void start() {
         connectionAcceptorExecutor.submit(() -> {
-            while (true) {
-                try {
-                    if (serverSocket.isClosed())
-                        break;
-                    Socket clientSocket = serverSocket.accept();
-                    clientIOWorkers.submit(new ClientTask(clientSocket, server));
-                }
-                catch (IOException e) {
-                    throw new RuntimeException("", e); //TODO
-                }
-            }
+//            while (true) {
+//                try {
+//                    if (serverSocket.isClosed())
+//                        break;
+//                    Socket clientSocket = serverSocket.accept();
+//                    clientIOWorkers.submit(new ClientTask(clientSocket, server));
+//                }
+//                catch (IOException e) {
+//                    close();
+//                    throw new RuntimeException("", e); //TODO
+//                }
+//            }
         });
     }
 
@@ -59,13 +60,13 @@ public class JavaSocketServerConnector implements Closeable {
      */
     @Override
     public void close() {
-        System.out.println("Stopping socket connector");
-        try {
-            serverSocket.close();
-        }
-        catch (IOException e) {
-            throw new RuntimeException("", e); //TODO
-        }
+//        System.out.println("Stopping socket connector");
+//        try {
+//            serverSocket.close();
+//        }
+//        catch (IOException e) {
+//            throw new RuntimeException("", e); //TODO
+//        }
     }
 
 
