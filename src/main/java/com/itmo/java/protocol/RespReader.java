@@ -66,9 +66,9 @@ public class RespReader implements AutoCloseable {
      * @throws IOException  при ошибке чтения
      */
     public RespError readError() throws IOException {
-//        byte b = (byte) is.read();
-//        if (b != RespError.CODE)
-//            throw new IOException(""); //TODO
+        byte b = (byte) is.read();
+        if (b != RespError.CODE)
+            throw new IOException(""); //TODO
         byte[] message = readToCRLF(is);
         return new RespError(message);
     }
@@ -144,7 +144,8 @@ public class RespReader implements AutoCloseable {
                 if (b != CR) {
                     message.add(b);
                     b = (byte) is.read();
-                } else {
+                }
+                else {
                     b = (byte) is.read();
                     if (b == LF) {
                         break;
