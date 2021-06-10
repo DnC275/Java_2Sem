@@ -29,8 +29,10 @@ public class DatabaseServerInitializer implements Initializer {
         }
         else{
             for (File db : path.listFiles()){
-                InitializationContextImpl newInit = new InitializationContextImpl(context.executionEnvironment(), new DatabaseInitializationContextImpl(db.getName(), path.toPath()), context.currentTableContext(), context.currentSegmentContext());
-                dbInit.perform(newInit);
+                if (db.isDirectory()) {
+                    InitializationContextImpl newInit = new InitializationContextImpl(context.executionEnvironment(), new DatabaseInitializationContextImpl(db.getName(), path.toPath()), context.currentTableContext(), context.currentSegmentContext());
+                    dbInit.perform(newInit);
+                }
             }
         }
     }

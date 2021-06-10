@@ -35,9 +35,11 @@ public class TableInitializer implements Initializer {
             File[] a = path.listFiles();
             Arrays.sort(a);
             for (File segment : a) {
-                InitializationContextImpl newInit = new InitializationContextImpl(context.executionEnvironment(), context.currentDbContext(), context.currentTableContext(),
-                        new SegmentInitializationContextImpl(segment.getName(), Paths.get(path.toPath().toString(), segment.getName()), 0, new SegmentIndex()));
-                segmentInit.perform(newInit);
+                if (segment.isDirectory()) {
+                    InitializationContextImpl newInit = new InitializationContextImpl(context.executionEnvironment(), context.currentDbContext(), context.currentTableContext(),
+                            new SegmentInitializationContextImpl(segment.getName(), Paths.get(path.toPath().toString(), segment.getName()), 0, new SegmentIndex()));
+                    segmentInit.perform(newInit);
+                }
             }
             context.currentDbContext().addTable(TableImpl.initializeFromContext(context.currentTableContext()));
         }

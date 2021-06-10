@@ -31,8 +31,10 @@ public class DatabaseInitializer implements Initializer {
         }
         else{
             for (File table : path.listFiles()){
-                InitializationContextImpl newInit = new InitializationContextImpl(context.executionEnvironment(), context.currentDbContext(), new TableInitializationContextImpl(table.getName(), path.toPath(), new TableIndex()), context.currentSegmentContext());
-                tableInit.perform(newInit);
+                if (table.isDirectory()) {
+                    InitializationContextImpl newInit = new InitializationContextImpl(context.executionEnvironment(), context.currentDbContext(), new TableInitializationContextImpl(table.getName(), path.toPath(), new TableIndex()), context.currentSegmentContext());
+                    tableInit.perform(newInit);
+                }
             }
             context.executionEnvironment().addDatabase(DatabaseImpl.initializeFromContext(context.currentDbContext()));
         }
