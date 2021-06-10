@@ -57,9 +57,9 @@ public class JavaSocketServerConnector implements Closeable {
                 try {
                     if (serverSocket.isClosed())
                         break;
-                    System.out.println("start");
+//                    System.out.println("start");
                     Socket clientSocket = serverSocket.accept();
-                    System.out.println("Client connected");
+//                    System.out.println("Client connected");
                     clientIOWorkers.submit(new ClientTask(clientSocket, server));
                 }
                 catch (IOException e) {
@@ -130,24 +130,23 @@ public class JavaSocketServerConnector implements Closeable {
          */
         @Override
         public void run() {
-            throw new RuntimeException("Sosite");
-//            try {
-//                CommandReader commandReader = new CommandReader(new RespReader(is), server.getEnv());
+            try {
+                CommandReader commandReader = new CommandReader(new RespReader(is), server.getEnv());
 //                System.out.println("1");
-//                DatabaseCommand command = commandReader.readCommand();
+                DatabaseCommand command = commandReader.readCommand();
 //                System.out.println("2");
-//                DatabaseCommandResult result = server.executeNextCommand(command).get();
+                DatabaseCommandResult result = server.executeNextCommand(command).get();
 //                System.out.println("3");
-//                RespWriter writer = new RespWriter(os);
+                RespWriter writer = new RespWriter(os);
 //                System.out.println("4");
-//                RespObject object = result.serialize();
+                RespObject object = result.serialize();
 //                System.out.println("5");
-//                writer.write(object);
+                writer.write(object);
 //                System.out.println("6");
-//            }
-//            catch (IOException | InterruptedException | ExecutionException e) {
-//                throw new RuntimeException("", e); //TODO
-//            }
+            }
+            catch (IOException | InterruptedException | ExecutionException e) {
+                throw new RuntimeException("", e); //TODO
+            }
         }
 
         /**
