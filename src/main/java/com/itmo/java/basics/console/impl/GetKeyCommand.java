@@ -8,6 +8,7 @@ import com.itmo.java.basics.exceptions.DatabaseException;
 import com.itmo.java.basics.logic.Database;
 import com.itmo.java.protocol.model.RespObject;
 
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -55,7 +56,8 @@ public class GetKeyCommand implements DatabaseCommand {
             }
             Optional<byte[]> value = database.get().read(tableName, key);
             if (value.isEmpty()){
-                throw new DatabaseException(String.format("Error reading the value by key '%s'", key));
+                return DatabaseCommandResult.success("Null".getBytes(StandardCharsets.UTF_8));
+//                throw new DatabaseException(String.format("Error reading the value by key '%s'", key));
             }
             return DatabaseCommandResult.success(value.get());
         }
