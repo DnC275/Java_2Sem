@@ -82,7 +82,7 @@ public class JavaSocketServerConnector implements Closeable {
             serverSocket.close();
         }
         catch (IOException e) {
-            throw new RuntimeException("", e); //TODO
+            throw new RuntimeException("Close javaSocketConnection error", e); //TODO
         }
     }
 
@@ -117,7 +117,7 @@ public class JavaSocketServerConnector implements Closeable {
                 os = client.getOutputStream();
             }
             catch (IOException e) {
-                throw new RuntimeException("", e);
+                throw new RuntimeException("ClientTask prikol", e);
             }
         }
 
@@ -145,7 +145,7 @@ public class JavaSocketServerConnector implements Closeable {
 //                System.out.println("6");
             }
             catch (IOException | InterruptedException | ExecutionException e) {
-                throw new RuntimeException("", e); //TODO
+                throw new RuntimeException("Client task run error", e); //TODO
             }
         }
 
