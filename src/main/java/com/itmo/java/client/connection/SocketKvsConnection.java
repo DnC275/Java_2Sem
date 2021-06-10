@@ -18,7 +18,7 @@ public class SocketKvsConnection implements KvsConnection {
     private final ConnectionConfig connectionConfig;
     private final RespReader reader;
     private final RespWriter writer;
-    
+
 //    InputStream is;
 //    OutputStream os;
 
