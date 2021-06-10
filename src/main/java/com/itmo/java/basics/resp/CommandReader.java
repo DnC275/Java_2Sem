@@ -35,10 +35,13 @@ public class CommandReader implements AutoCloseable {
      */
     public DatabaseCommand readCommand() throws IOException {
         List<RespObject> objects = reader.readArray().getObjects();
+        System.out.println("I sosu");
         if (!checkObjectsCorrectness(objects)) {
             throw new IllegalArgumentException(""); //TODO
         }
+        System.out.println("I vse eshe sosu");
         RespObject commandNameObject = objects.get(DatabaseCommandArgPositions.COMMAND_NAME.getPositionIndex());
+        System.out.println("I uze ne sosijihlk");
         return DatabaseCommands.valueOf(commandNameObject.asString()).getCommand(env, objects);
     }
 

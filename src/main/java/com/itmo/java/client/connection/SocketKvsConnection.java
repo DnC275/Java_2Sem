@@ -29,6 +29,8 @@ public class SocketKvsConnection implements KvsConnection {
             os = clientSocket.getOutputStream();
         }
         catch (IOException e) {
+            close();
+            e.printStackTrace();
             throw new RuntimeException("Errors with socket kvs connection");
         }
     }
@@ -43,10 +45,14 @@ public class SocketKvsConnection implements KvsConnection {
     public synchronized RespObject send(int commandId, RespArray command) throws ConnectionException {
         try {
             command.write(os);
+            System.out.println("Written");
             RespReader respReader = new RespReader(is);
-            return respReader.readObject();
+            RespObject object = respReader.readObject();
+            System.out.println("Read");
+            return object;
         }
         catch (IOException e) {
+            close();
             throw new ConnectionException("Something wrong with connection", e);
         }
     }
