@@ -56,7 +56,7 @@ public class GetKeyCommand implements DatabaseCommand {
             }
             Optional<byte[]> value = database.get().read(tableName, key);
             if (value.isEmpty()){
-                return DatabaseCommandResult.success("Null".getBytes(StandardCharsets.UTF_8));
+                return DatabaseCommandResult.success(null);
 //                throw new DatabaseException(String.format("Error reading the value by key '%s'", key));
             }
             return DatabaseCommandResult.success(value.get());
