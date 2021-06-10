@@ -118,7 +118,7 @@ public class JavaSocketServerConnector implements Closeable {
             try {
                 this.client = client;
                 this.server = server;
-                commandReader = new CommandReader(new RespReader(client.getInputStream());
+                commandReader = new CommandReader(new RespReader(client.getInputStream()), server.getEnv());
                 writer = new RespWriter(client.getOutputStream());
             }
             catch (IOException e) {
