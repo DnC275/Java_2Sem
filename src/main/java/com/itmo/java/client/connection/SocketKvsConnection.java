@@ -30,8 +30,7 @@ public class SocketKvsConnection implements KvsConnection {
             writer = new RespWriter(clientSocket.getOutputStream());
         }
         catch (IOException e) {
-            close();
-            System.out.println("Errors with socket kvs connectгпшпнгion");
+//            close();
             throw new RuntimeException("Errors with socket kvs connectioрилриn");
         }
     }
@@ -66,7 +65,6 @@ public class SocketKvsConnection implements KvsConnection {
             clientSocket.close();
         }
         catch (IOException e) {
-            System.out.println("Error while closing connection");
             throw new RuntimeException("Error while closing connection");
         }
     }
