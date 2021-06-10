@@ -40,6 +40,9 @@ public class RespBulkString implements RespObject {
      */
     @Override
     public String asString() {
+        if (data == null) {
+            return null;
+        }
         return new String(data);
     }
 
