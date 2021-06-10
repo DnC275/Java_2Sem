@@ -63,8 +63,9 @@ public class JavaSocketServerConnector implements Closeable {
                     clientIOWorkers.submit(new ClientTask(clientSocket, server));
                 }
                 catch (IOException e) {
-                    close();
-                    throw new RuntimeException("Prikol", e); //TODO
+//                    close();
+                    System.out.println("Prikol");
+//                    throw new RuntimeException("Prikol", e); //TODO
                 }
             }
         });
@@ -82,7 +83,8 @@ public class JavaSocketServerConnector implements Closeable {
             serverSocket.close();
         }
         catch (IOException e) {
-            throw new RuntimeException("Close javaSocketConnection error", e); //TODO
+            System.out.println("Close javaSocketConnection error");
+//            throw new RuntimeException("Close javaSocketConnection error", e); //TODO
         }
     }
 
@@ -117,6 +119,7 @@ public class JavaSocketServerConnector implements Closeable {
                 os = client.getOutputStream();
             }
             catch (IOException e) {
+                System.out.println("ClientTask prikol");
                 throw new RuntimeException("ClientTask prikol", e);
             }
         }
@@ -145,7 +148,8 @@ public class JavaSocketServerConnector implements Closeable {
 //                System.out.println("6");
             }
             catch (IOException | InterruptedException | ExecutionException e) {
-                throw new RuntimeException("Client task run error", e); //TODO
+                System.out.println("Client task run error");
+//                throw new RuntimeException("Client task run error", e); //TODO
             }
         }
 
@@ -155,10 +159,13 @@ public class JavaSocketServerConnector implements Closeable {
         @Override
         public void close() {
             try {
+                is.close();
+                os.close();
                 client.close();
             }
             catch (IOException e) {
-                throw new RuntimeException("Close error client task", e); //TODO
+                System.out.println("Close error client task");
+//                throw new RuntimeException("Close error client task", e); //TODO
             }
         }
     }
