@@ -104,8 +104,11 @@ public class JavaSocketServerConnector implements Closeable {
     static class ClientTask implements Runnable, Closeable {
         private final Socket client;
         private final DatabaseServer server;
-        private final InputStream is;
-        private final OutputStream os;
+        private final CommandReader commandReader;
+        private final RespWriter writer;
+
+//        private final InputStream is;
+//        private final OutputStream os;
 
         /**
          * @param client клиентский сокет
@@ -115,8 +118,8 @@ public class JavaSocketServerConnector implements Closeable {
             try {
                 this.client = client;
                 this.server = server;
-                is = client.getInputStream();
-                os = client.getOutputStream();
+                commandReader = new CommandReader(new RespReader(client.getInputStream());
+                writer = new RespWriter(client.getOutputStream());
             }
             catch (IOException e) {
                 System.out.println("ClientTask prikol");
@@ -135,14 +138,12 @@ public class JavaSocketServerConnector implements Closeable {
         public void run() {
             while (!client.isClosed()) {
                 try {
-                    CommandReader commandReader = new CommandReader(new RespReader(is), server.getEnv());
                     DatabaseCommand command = commandReader.readCommand();
                     DatabaseCommandResult result = server.executeNextCommand(command).get();
-                    RespWriter writer = new RespWriter(os);
-                    RespObject object = result.serialize();
-                    writer.write(object);
+                    writer.write(result.serialize());
                 } catch (IOException | InterruptedException | ExecutionException e) {
 //                    System.out.println("Client task run error");
+                    close();
                     throw new RuntimeException("Client task run error", e); //TODO
                 }
             }
@@ -154,13 +155,13 @@ public class JavaSocketServerConnector implements Closeable {
         @Override
         public void close() {
             try {
-                is.close();
-                os.close();
+                commandReader.close();
+                writer.close();
                 client.close();
             }
-            catch (IOException e) {
-                System.out.println("Close error client task");
-//                throw new RuntimeException("Close error client task", e); //TODO
+            catch (Exception e) {
+//                System.out.println("Close error client task");
+                throw new RuntimeException("Close error client task", e); //TODO
             }
         }
     }
