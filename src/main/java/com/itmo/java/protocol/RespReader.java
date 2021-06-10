@@ -54,7 +54,7 @@ public class RespReader implements AutoCloseable {
             case RespError.CODE:
                 return readError();
             default:
-                throw new IOException(""); //TODO
+                throw new IOException("RespReader readObject error"); //TODO
         }
     }
 
@@ -67,7 +67,7 @@ public class RespReader implements AutoCloseable {
     public RespError readError() throws IOException {
         byte b = (byte) pushbackInputStream.read();
         if (b != RespError.CODE)
-            throw new IOException(""); //TODO
+            throw new IOException("Read error error"); //TODO
         byte[] message = readToCRLF(pushbackInputStream);
         return new RespError(message);
     }
@@ -81,14 +81,14 @@ public class RespReader implements AutoCloseable {
     public RespBulkString readBulkString() throws IOException {
         byte b = (byte) pushbackInputStream.read();
         if (b != RespBulkString.CODE)
-            throw new IOException(""); //TODO
+            throw new IOException("readBulkString error"); //TODO
         int length = Integer.parseInt(new String(readToCRLF(pushbackInputStream)));
         if (length == -1) {
             return RespBulkString.NULL_STRING;
         }
         byte[] message = readToCRLF(pushbackInputStream);
         if (message.length != length) {
-            throw new IOException(""); //TODO
+            throw new IOException("readBulkString error"); //TODO
         }
         return new RespBulkString(message);
     }
@@ -102,7 +102,7 @@ public class RespReader implements AutoCloseable {
     public RespArray readArray() throws IOException {
         byte b = (byte) pushbackInputStream.read();
         if (b != RespArray.CODE)
-            throw new IOException(""); //TODO
+            throw new IOException("readArray error"); //TODO
         int count = Integer.parseInt(new String(readToCRLF(pushbackInputStream)));
         RespObject[] objects = new RespObject[count];
         for (int i = 0; i < count; i++) {
@@ -120,10 +120,10 @@ public class RespReader implements AutoCloseable {
     public RespCommandId readCommandId() throws IOException {
         byte b = (byte) pushbackInputStream.read();
         if (b != RespCommandId.CODE)
-            throw new IOException(""); //TODO
+            throw new IOException("readCommandId error"); //TODO
         byte[] byteId = readToCRLF(pushbackInputStream);
         if (byteId.length != 4)
-            throw new IOException(""); //TODO
+            throw new IOException("readCommandId error"); //TODO
         ByteBuffer bb = ByteBuffer.wrap(byteId);
         return new RespCommandId(bb.getInt());
     }
@@ -138,7 +138,7 @@ public class RespReader implements AutoCloseable {
         try {
             byte b = (byte) pushbackInputStream.read();
             if (b == -1) {
-                throw new EOFException(""); //TODO
+                throw new EOFException("getNextByte in respReader error"); //TODO
             }
             pushbackInputStream.unread(b);
             return b;
@@ -147,7 +147,7 @@ public class RespReader implements AutoCloseable {
             throw e;
         }
         catch (IOException e) {
-            throw new IOException("", e);
+            throw new IOException("getNextByte in respReader error", e);
         }
     }
 
@@ -157,7 +157,7 @@ public class RespReader implements AutoCloseable {
             byte b = (byte) is.read();
             while (true) {
                 if (b == -1)
-                    throw new EOFException(""); //TODO
+                    throw new EOFException("readToCrLF error"); //TODO
                 if (b != CR) {
                     message.add(b);
                     b = (byte) is.read();
@@ -180,7 +180,7 @@ public class RespReader implements AutoCloseable {
             throw e;
         }
         catch (IOException e) {
-            throw new IOException("", e); //TODO
+            throw new IOException("readToCrLf error", e); //TODO
         }
     }
 }

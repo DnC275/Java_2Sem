@@ -37,7 +37,7 @@ public class CommandReader implements AutoCloseable {
         List<RespObject> objects = reader.readArray().getObjects();
 //        System.out.println("I sosu");
         if (!checkObjectsCorrectness(objects)) {
-            throw new IllegalArgumentException(""); //TODO
+            throw new IllegalArgumentException("Illegal argument in respReader readCommand"); //TODO
         }
 //        System.out.println("I vse eshe sosu");
         RespObject commandNameObject = objects.get(DatabaseCommandArgPositions.COMMAND_NAME.getPositionIndex());
