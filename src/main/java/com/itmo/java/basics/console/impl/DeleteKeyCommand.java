@@ -6,6 +6,7 @@ import com.itmo.java.basics.console.DatabaseCommandResult;
 import com.itmo.java.basics.console.ExecutionEnvironment;
 import com.itmo.java.basics.exceptions.DatabaseException;
 import com.itmo.java.basics.logic.Database;
+import com.itmo.java.client.exception.DatabaseExecutionException;
 import com.itmo.java.protocol.model.RespObject;
 
 import java.nio.charset.StandardCharsets;
@@ -55,6 +56,7 @@ public class DeleteKeyCommand implements DatabaseCommand {
             if (database.isEmpty()){
                 throw new DatabaseException(String.format("Non-existent database named %s", databaseName));
             }
+            Optional<byte[]> value = database.get().read(tableName, key);
             database.get().delete(tableName, key);
             return DatabaseCommandResult.success(String.
                     format("Value of key '%s' was deleted successfully", key).getBytes(StandardCharsets.UTF_8));
