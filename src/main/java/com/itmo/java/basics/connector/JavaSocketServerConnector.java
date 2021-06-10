@@ -63,7 +63,7 @@ public class JavaSocketServerConnector implements Closeable {
                     clientIOWorkers.submit(new ClientTask(clientSocket, server));
                 }
                 catch (IOException e) {
-//                    close();
+                    close();
                     System.out.println("Prikol");
 //                    throw new RuntimeException("Prikol", e); //TODO
                 }
