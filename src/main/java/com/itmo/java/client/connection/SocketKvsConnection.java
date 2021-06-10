@@ -16,8 +16,6 @@ import java.net.UnknownHostException;
 public class SocketKvsConnection implements KvsConnection {
     Socket clientSocket;
     ConnectionConfig connectionConfig;
-//    DataInputStream is;
-//    DataOutputStream os;
     InputStream is;
     OutputStream os;
 
@@ -46,7 +44,7 @@ public class SocketKvsConnection implements KvsConnection {
         try {
             command.write(os);
             RespReader respReader = new RespReader(is);
-            return respReader.readArray();
+            return respReader.readObject();
         }
         catch (IOException e) {
             throw new ConnectionException("Something wrong with connection", e);
