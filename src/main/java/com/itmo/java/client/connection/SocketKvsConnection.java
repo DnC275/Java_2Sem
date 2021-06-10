@@ -52,7 +52,7 @@ public class SocketKvsConnection implements KvsConnection {
             return object;
         }
         catch (IOException e) {
-//            close();
+            close();
             throw new ConnectionException("Something wrong with connection", e);
         }
     }
