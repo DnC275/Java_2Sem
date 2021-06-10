@@ -63,9 +63,9 @@ public class JavaSocketServerConnector implements Closeable {
                     clientIOWorkers.submit(new ClientTask(clientSocket, server));
                 }
                 catch (IOException e) {
-//                    close();
+                    close();
                     System.out.println("Prikol");
-//                    throw new RuntimeException("Prikol", e); //TODO
+                    throw new RuntimeException("Prikol", e); //TODO
                 }
             }
         });
@@ -84,7 +84,7 @@ public class JavaSocketServerConnector implements Closeable {
         }
         catch (IOException e) {
             System.out.println("Close javaSocketConnection error");
-//            throw new RuntimeException("Close javaSocketConnection error", e); //TODO
+            throw new RuntimeException("Close javaSocketConnection error", e); //TODO
         }
     }
 
@@ -122,7 +122,7 @@ public class JavaSocketServerConnector implements Closeable {
                 writer = new RespWriter(client.getOutputStream());
             }
             catch (IOException e) {
-//                close();
+                close();
                 System.out.println("ClientTask prikol");
                 throw new RuntimeException("ClientTask prikol", e);
             }
