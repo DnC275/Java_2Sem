@@ -29,7 +29,7 @@ public class SocketKvsConnection implements KvsConnection {
             os = clientSocket.getOutputStream();
         }
         catch (IOException e) {
-            close();
+//            close();
             e.printStackTrace();
             throw new RuntimeException("Errors with socket kvs connection");
         }
@@ -52,7 +52,7 @@ public class SocketKvsConnection implements KvsConnection {
             return object;
         }
         catch (IOException e) {
-            close();
+//            close();
             throw new ConnectionException("Something wrong with connection", e);
         }
     }
