@@ -23,15 +23,13 @@ public class SocketKvsConnection implements KvsConnection {
         this.connectionConfig = config;
         try {
             clientSocket = new Socket(connectionConfig.getHost(), connectionConfig.getPort());
-//            is = new DataInputStream(clientSocket.getInputStream());
-//            os = new DataOutputStream(clientSocket.getOutputStream());
             is = clientSocket.getInputStream();
             os = clientSocket.getOutputStream();
         }
         catch (IOException e) {
 //            close();
             System.out.println("Errors with socket kvs connection");
-            throw new RuntimeException("Errors with socket kvs connection");
+//            throw new RuntimeException("Errors with socket kvs connection");
         }
     }
 
@@ -45,15 +43,13 @@ public class SocketKvsConnection implements KvsConnection {
     public synchronized RespObject send(int commandId, RespArray command) throws ConnectionException {
         try {
             command.write(os);
-            System.out.println("Written");
             RespReader respReader = new RespReader(is);
             RespObject object = respReader.readObject();
-            System.out.println("Read");
             return object;
         }
         catch (IOException e) {
             close();
-            throw new ConnectionException("Something wrong with connection", e);
+            throw new ConnectionException("Something wrong with connection");
         }
     }
 
