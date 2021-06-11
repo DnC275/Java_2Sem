@@ -45,7 +45,9 @@ public class SocketKvsConnection implements KvsConnection {
     public synchronized RespObject send(int commandId, RespArray command) throws ConnectionException {
         try {
             writer.write(command);
+            System.out.println("after write");
             RespObject object = reader.readObject();
+            System.out.println("after read");
             return object;
         }
         catch (IOException e) {
