@@ -142,9 +142,9 @@ public class JavaSocketServerConnector implements Closeable {
             }
             catch (IOException | InterruptedException | ExecutionException e) {
 //                    System.out.println("Client task run error");
-                System.out.println(e.getMessage());
+//                System.out.println(e.getMessage());
                 close();
-//                    throw new RuntimeException("Client task run error", e); //TODO
+                throw new RuntimeException(e.getMessage()); //TODO
             }
         }
 
