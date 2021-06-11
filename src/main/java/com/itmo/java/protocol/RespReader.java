@@ -104,6 +104,8 @@ public class RespReader implements AutoCloseable {
         if (b != RespArray.CODE)
             throw new IOException("readArray error"); //TODO
         int count = Integer.parseInt(new String(readToCRLF(pushbackInputStream)));
+        if (count < 1)
+                throw new IOException("");
         RespObject[] objects = new RespObject[count];
         for (int i = 0; i < count; i++) {
             objects[i] = readObject();
