@@ -154,10 +154,9 @@ public class RespReader implements AutoCloseable {
         catch (EOFException e) {
             throw e;
         }
-        catch (IOException ignored) {
-//            throw new IOException(e.getMessage());
+        catch (IOException e) {
+            throw new IOException(e.getMessage());
         }
-        return -1;
     }
 
     public static byte[] readToCRLF(InputStream is) throws IOException {
