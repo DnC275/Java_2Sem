@@ -41,13 +41,12 @@ public class ConfigLoader {
         try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(configFileName)){
             properties.load(inputStream);
         }
-        catch (IOException | NullPointerException e) {
-            properties = defaults;
+        catch (Exception ignored) {
         }
         try (InputStream inputStream = new FileInputStream(configFileName)){
             properties.load(inputStream);
         }
-        catch (IOException | NullPointerException ignored) {
+        catch (Exception ignored) {
         }
         databaseServerConfigBuilder.dbConfig(new DatabaseConfig(properties.getProperty("kvs.workingPath")));
         databaseServerConfigBuilder.serverConfig(new ServerConfig(properties.getProperty("kvs.host"), Integer.parseInt(properties.getProperty("kvs.port"))));

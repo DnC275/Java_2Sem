@@ -139,9 +139,9 @@ public class RespReader implements AutoCloseable {
     private byte getNextByte() throws IOException {
         try {
             byte b = (byte) pushbackInputStream.read();
-            if (b == -1) {
-                throw new EOFException("getNextByte in respReader error"); //TODO
-            }
+//            if (b == -1) {
+//                throw new EOFException("getNextByte in respReader error"); //TODO
+//            }
             pushbackInputStream.unread(b);
             return b;
         }
