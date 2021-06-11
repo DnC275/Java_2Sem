@@ -86,10 +86,16 @@ public class RespReader implements AutoCloseable {
         if (length == -1) {
             return RespBulkString.NULL_STRING;
         }
-        byte[] message = readToCRLF(pushbackInputStream);
-        if (message.length != length) {
-            throw new IOException("readBulkString error"); //TODO
+        byte[] message = pushbackInputStream.readNBytes(length);
+        byte cr = (byte) pushbackInputStream.read();
+        byte lf = (byte) pushbackInputStream.read();
+        if (cr != CR || lf != LF) {
+            throw new IOException("");
         }
+//        byte[] message = readToCRLF(pushbackInputStream);
+//        if (message.length != length) {
+//            throw new IOException("readBulkString error"); //TODO
+//        }
         return new RespBulkString(message);
     }
 
