@@ -1,22 +1,20 @@
 package com.itmo.java.protocol;
 
-import com.itmo.java.basics.logic.io.DatabaseInputStream;
 import com.itmo.java.protocol.model.RespArray;
 import com.itmo.java.protocol.model.RespBulkString;
 import com.itmo.java.protocol.model.RespCommandId;
 import com.itmo.java.protocol.model.RespError;
 import com.itmo.java.protocol.model.RespObject;
 
-import javax.xml.crypto.Data;
 import java.io.*;
-import java.nio.ByteBuffer;
+import java.lang.reflect.Array;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
 public class RespReader implements AutoCloseable {
-    private PushbackInputStream pushbackInputStream;
 
     /**
      * Специальные символы окончания элемента
@@ -24,15 +22,23 @@ public class RespReader implements AutoCloseable {
     private static final byte CR = '\r';
     private static final byte LF = '\n';
 
+    private final PushbackInputStream stream;
+
     public RespReader(InputStream is) {
-        this.pushbackInputStream = new PushbackInputStream(is);
+        stream = new PushbackInputStream(is);
     }
 
     /**
      * Есть ли следующий массив в стриме?
      */
     public boolean hasArray() throws IOException {
-        return getNextByte() == RespArray.CODE;
+        return returnFirstByte() == RespArray.CODE;
+    }
+
+    private byte returnFirstByte() throws IOException {
+        byte firstByte = (byte)stream.read();
+        stream.unread(firstByte);
+        return firstByte;
     }
 
     /**
@@ -43,18 +49,22 @@ public class RespReader implements AutoCloseable {
      * @throws IOException  при ошибке чтения
      */
     public RespObject readObject() throws IOException {
-        byte b = getNextByte();
-        switch (b) {
-            case RespCommandId.CODE:
-                return readCommandId();
-            case RespBulkString.CODE:
-                return readBulkString();
-            case RespArray.CODE:
-                return readArray();
-            case RespError.CODE:
+        switch (returnFirstByte()){
+            case RespError.CODE: {
                 return readError();
-            default:
-                throw new IOException("RespReader readObject error"); //TODO
+            }
+            case RespBulkString.CODE: {
+                return readBulkString();
+            }
+            case RespArray.CODE: {
+                return readArray();
+            }
+            case RespCommandId.CODE: {
+                return readCommandId();
+            }
+            default: {
+                throw new IOException("Unknown Object");
+            }
         }
     }
 
@@ -65,11 +75,10 @@ public class RespReader implements AutoCloseable {
      * @throws IOException  при ошибке чтения
      */
     public RespError readError() throws IOException {
-        byte b = (byte) pushbackInputStream.read();
-        if (b != RespError.CODE)
-            throw new IOException("Read error error"); //TODO
-        byte[] message = readToCRLF(pushbackInputStream);
-        return new RespError(message);
+        byte type = (byte) stream.read();
+        if (type != RespError.CODE)
+            throw new IOException("Error syntax error");
+        return new RespError(readBeforeSeparator());
     }
 
     /**
@@ -79,24 +88,18 @@ public class RespReader implements AutoCloseable {
      * @throws IOException  при ошибке чтения
      */
     public RespBulkString readBulkString() throws IOException {
-        byte b = (byte) pushbackInputStream.read();
-        if (b != RespBulkString.CODE)
-            throw new IOException("readBulkString error"); //TODO
-        int length = Integer.parseInt(new String(readToCRLF(pushbackInputStream)));
-        if (length == -1) {
+        byte type = (byte) stream.read();
+        if (type != RespBulkString.CODE)
+            throw new IOException("Bulk String syntax error");
+        int size = Integer.parseInt(new String(readBeforeSeparator()));
+        if (size == -1){
             return RespBulkString.NULL_STRING;
         }
-        byte[] message = pushbackInputStream.readNBytes(length);
-        byte cr = (byte) pushbackInputStream.read();
-        byte lf = (byte) pushbackInputStream.read();
-        if (cr != CR || lf != LF) {
-            throw new IOException("");
+        byte[] data = stream.readNBytes(size);
+        if (!checkLastBytes()){
+            throw new IOException("Bulk String syntax error");
         }
-//        byte[] message = readToCRLF(pushbackInputStream);
-//        if (message.length != length) {
-//            throw new IOException("readBulkString error"); //TODO
-//        }
-        return new RespBulkString(message);
+        return new RespBulkString(data);
     }
 
     /**
@@ -106,17 +109,18 @@ public class RespReader implements AutoCloseable {
      * @throws IOException  при ошибке чтения
      */
     public RespArray readArray() throws IOException {
-        byte b = (byte) pushbackInputStream.read();
-        if (b != RespArray.CODE)
-            throw new IOException("readArray error"); //TODO
-        int count = Integer.parseInt(new String(readToCRLF(pushbackInputStream)));
-        if (count < 1)
-                throw new IOException("");
-        RespObject[] objects = new RespObject[count];
-        for (int i = 0; i < count; i++) {
-            objects[i] = readObject();
+        byte type = (byte) stream.read();
+        if (type != RespArray.CODE)
+            throw new IOException("Array syntax error");
+        int size = Integer.parseInt(new String(readBeforeSeparator(), StandardCharsets.UTF_8));
+        if (size < 1) {
+            throw new IOException("");
         }
-        return new RespArray(objects);
+        RespObject[] objectList = new RespObject[size];
+        for (int i = 0; i < size; i++){
+            objectList[i] = readObject();
+        }
+        return new RespArray(objectList);
     }
 
     /**
@@ -126,69 +130,50 @@ public class RespReader implements AutoCloseable {
      * @throws IOException  при ошибке чтения
      */
     public RespCommandId readCommandId() throws IOException {
-        byte b = (byte) pushbackInputStream.read();
-        if (b != RespCommandId.CODE)
-            throw new IOException("readCommandId error"); //TODO
-        byte[] byteId = readToCRLF(pushbackInputStream);
-        if (byteId.length != 4)
-            throw new IOException("readCommandId error"); //TODO
-        ByteBuffer bb = ByteBuffer.wrap(byteId);
-        return new RespCommandId(bb.getInt());
+        byte type = (byte) stream.read();
+        if (type != RespCommandId.CODE)
+            throw new IOException("Command id syntax error");
+        int ch1 = stream.read();
+        int ch2 = stream.read();
+        int ch3 = stream.read();
+        int ch4 = stream.read();
+        if ((ch1 | ch2 | ch3 | ch4) < 0)
+            throw new EOFException();
+        if (!checkLastBytes()){
+            throw new IOException("Command id syntax error");
+        }
+        return new RespCommandId((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4));
     }
 
 
     @Override
     public void close() throws IOException {
-        pushbackInputStream.close();
+        stream.close();
     }
 
-    private byte getNextByte() throws IOException {
-        try {
-            byte b = (byte) pushbackInputStream.read();
-//            if (b == -1) {
-//                throw new EOFException("getNextByte in respReader error"); //TODO
-//            }
-            pushbackInputStream.unread(b);
-            return b;
-        }
-        catch (EOFException e) {
-            throw e;
-        }
-        catch (IOException e) {
-            throw new IOException(e.getMessage());
-        }
-    }
-
-    public static byte[] readToCRLF(InputStream is) throws IOException {
-        try {
-            List<Byte> message = new ArrayList<>();
-            byte b = (byte) is.read();
-            while (true) {
-                if (b == -1)
-                    throw new EOFException("readToCrLF error"); //TODO
-                if (b != CR) {
-                    message.add(b);
-                    b = (byte) is.read();
-                }
-                else {
-                    b = (byte) is.read();
-                    if (b == LF) {
-                        break;
+    private byte[] readBeforeSeparator() throws IOException{
+        ArrayList<Byte> bytes = new ArrayList<>();
+        while (true){
+            byte currentByte = (byte)stream.read();
+            bytes.add(currentByte);
+            while (currentByte == CR) {
+                byte nextByte = (byte)stream.read();
+                if (nextByte == LF) {
+                    byte[] byteArray = new byte[bytes.size()-1];
+                    for (int i = 0; i < bytes.size() - 1; i++) {
+                        byteArray[i] = bytes.get(i);
                     }
-                    message.add(CR);
+                    return byteArray;
                 }
+                currentByte = nextByte;
+                bytes.add(currentByte);
             }
-            byte[] result = new byte[message.size()];
-            int i = 0;
-            for (Byte character : message)
-                result[i++] = character;
-            return result;
         }
-        catch (EOFException e) {
-            throw e;
-        }
-        catch (IOException e) {
-            throw new IOException("readToCrLf error", e); //TODO
-        }
+    }
+
+    private boolean checkLastBytes() throws IOException{
+        byte byte1 = (byte) stream.read();
+        byte byte2 = (byte) stream.read();
+        return (byte1 == CR) && (byte2 == LF);
     }
 }
