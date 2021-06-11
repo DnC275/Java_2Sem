@@ -57,12 +57,12 @@ public class SimpleKvsClient implements KvsClient {
     private String sendCommand(KvsCommand command) throws DatabaseExecutionException {
         try {
             RespObject object = kvsConnection.send(command.getCommandId(), command.serialize());
-            if (object.isError()){
-                throw new DatabaseExecutionException(object.asString());
-            }
+//            if (object.isError()){
+//                throw new DatabaseExecutionException(object.asString());
+//            }
             return object.asString();
         }
-        catch(ConnectionException e){
+        catch(ConnectionException e) {
             throw new DatabaseExecutionException(e.getMessage(), e);
         }
     }
