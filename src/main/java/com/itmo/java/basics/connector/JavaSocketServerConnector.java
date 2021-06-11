@@ -133,16 +133,17 @@ public class JavaSocketServerConnector implements Closeable {
          */
         @Override
         public void run() {
-            while (!client.isClosed()) {
-                try {
+            try {
+                while (!client.isClosed()) {
                     DatabaseCommand command = commandReader.readCommand();
                     DatabaseCommandResult result = server.executeNextCommand(command).get();
                     writer.write(result.serialize());
-                } catch (IOException | InterruptedException | ExecutionException e) {
-//                    System.out.println("Client task run error");
-                    close();
-//                    throw new RuntimeException("Client task run error", e); //TODO
                 }
+            }
+            catch (IOException | InterruptedException | ExecutionException e) {
+//                    System.out.println("Client task run error");
+                close();
+//                    throw new RuntimeException("Client task run error", e); //TODO
             }
         }
 
