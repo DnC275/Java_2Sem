@@ -155,7 +155,7 @@ public class RespReader implements AutoCloseable {
             throw e;
         }
         catch (IOException e) {
-            throw new IOException("getNextByte in respReader error", e);
+            throw new IOException(e.getMessage());
         }
     }
 
