@@ -58,7 +58,8 @@ public class DeleteKeyCommand implements DatabaseCommand {
             }
             Optional<byte[]> value = database.get().read(tableName, key);
             if (value.isEmpty()) {
-                throw new DatabaseException("Non-existent key");
+                return DatabaseCommandResult.success(null);
+//                throw new DatabaseException("Non-existent key");
             }
             database.get().delete(tableName, key);
             return DatabaseCommandResult.success(value.get());
