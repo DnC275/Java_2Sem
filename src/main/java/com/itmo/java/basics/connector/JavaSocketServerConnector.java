@@ -53,19 +53,17 @@ public class JavaSocketServerConnector implements Closeable {
      */
     public void start() {
         connectionAcceptorExecutor.submit(() -> {
-            while (true) {
+            while (!serverSocket.isClosed()) {
                 try {
-                    if (serverSocket.isClosed())
-                        break;
 //                    System.out.println("start");
                     Socket clientSocket = serverSocket.accept();
 //                    System.out.println("Client connected");
                     clientIOWorkers.submit(new ClientTask(clientSocket, server));
                 }
                 catch (IOException e) {
-                    close();
-                    System.out.println("Prikol");
-                    throw new RuntimeException("Prikol", e); //TODO
+//                    close();
+//                    System.out.println("Prikol");
+//                    throw new RuntimeException("Prikol", e); //TODO
                 }
             }
         });
@@ -83,7 +81,6 @@ public class JavaSocketServerConnector implements Closeable {
             serverSocket.close();
         }
         catch (IOException e) {
-            System.out.println("Close javaSocketConnection error");
             throw new RuntimeException("Close javaSocketConnection error", e); //TODO
         }
     }
@@ -122,8 +119,7 @@ public class JavaSocketServerConnector implements Closeable {
                 writer = new RespWriter(client.getOutputStream());
             }
             catch (IOException e) {
-                close();
-                System.out.println("ClientTask prikol");
+//                close();
                 throw new RuntimeException("ClientTask prikol", e);
             }
         }
@@ -140,7 +136,6 @@ public class JavaSocketServerConnector implements Closeable {
             while (!client.isClosed()) {
                 try {
                     DatabaseCommand command = commandReader.readCommand();
-                    System.out.println("check");
                     DatabaseCommandResult result = server.executeNextCommand(command).get();
                     writer.write(result.serialize());
                 } catch (IOException | InterruptedException | ExecutionException e) {

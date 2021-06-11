@@ -18,6 +18,7 @@ public class RespWriter implements AutoCloseable{
      */
     public void write(RespObject object) throws IOException {
         object.write(os);
+        os.flush();
     }
 
     @Override
