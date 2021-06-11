@@ -44,6 +44,7 @@ public class SocketKvsConnection implements KvsConnection {
     @Override
     public synchronized RespObject send(int commandId, RespArray command) throws ConnectionException {
         try {
+            System.out.println("before write");
             writer.write(command);
             System.out.println("after write");
             RespObject object = reader.readObject();
