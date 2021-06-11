@@ -54,7 +54,7 @@ public class SocketKvsConnection implements KvsConnection {
             object = reader.readObject();
         }
         catch (IOException e) {
-            throw new ConnectionException("Read error");
+            throw new ConnectionException(e.getMessage());
         }
         return object;
     }
