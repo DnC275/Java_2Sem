@@ -107,7 +107,7 @@ public class RespReader implements AutoCloseable {
         byte b = (byte) pushbackInputStream.read();
         if (b != RespArray.CODE)
             throw new IOException("Array syntax error");
-        int count = Integer.parseInt(new String(readToCRLF(), StandardCharsets.UTF_8));
+        int count = Integer.parseInt(new String(readToCRLF()));
         if (count < 1) {
             throw new IOException("");
         }
