@@ -2,7 +2,6 @@ package com.itmo.java.protocol;
 
 import com.itmo.java.protocol.model.RespObject;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 

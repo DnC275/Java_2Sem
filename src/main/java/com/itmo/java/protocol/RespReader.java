@@ -49,7 +49,7 @@ public class RespReader implements AutoCloseable {
             case RespError.CODE:
                 return readError();
             default:
-                throw new IOException("RespReader readObject error"); //TODO
+                throw new IOException("Unknown command character");
         }
     }
 
@@ -62,7 +62,7 @@ public class RespReader implements AutoCloseable {
     public RespError readError() throws IOException {
         byte b = (byte) pushbackInputStream.read();
         if (b != RespError.CODE)
-            throw new IOException("Read error error"); //TODO
+            throw new IOException("The object symbol doesn't match the error symbol");
         byte[] message = readToCRLF(pushbackInputStream);
         return new RespError(message);
     }
@@ -76,7 +76,7 @@ public class RespReader implements AutoCloseable {
     public RespBulkString readBulkString() throws IOException {
         byte b = (byte) pushbackInputStream.read();
         if (b != RespBulkString.CODE)
-            throw new IOException("readBulkString error"); //TODO
+            throw new IOException("The object symbol doesn't match the bulkString symbol");
         int length = Integer.parseInt(new String(readToCRLF(pushbackInputStream)));
         if (length == -1) {
             return RespBulkString.NULL_STRING;
@@ -85,7 +85,7 @@ public class RespReader implements AutoCloseable {
         byte cr = (byte) pushbackInputStream.read();
         byte lf = (byte) pushbackInputStream.read();
         if (cr != CR || lf != LF) {
-            throw new IOException("");
+            throw new IOException("Invalid bulkString object");
         }
         return new RespBulkString(message);
     }
@@ -99,10 +99,10 @@ public class RespReader implements AutoCloseable {
     public RespArray readArray() throws IOException {
         byte b = (byte) pushbackInputStream.read();
         if (b != RespArray.CODE)
-            throw new IOException("readArray error"); //TODO
+            throw new IOException("The object symbol doesn't match the array symbol");
         int count = Integer.parseInt(new String(readToCRLF(pushbackInputStream)));
         if (count < 1)
-            throw new IOException("");
+            throw new IOException("Invalid array object");
         RespObject[] objects = new RespObject[count];
         for (int i = 0; i < count; i++) {
             objects[i] = readObject();
@@ -119,14 +119,13 @@ public class RespReader implements AutoCloseable {
     public RespCommandId readCommandId() throws IOException {
         byte b = (byte) pushbackInputStream.read();
         if (b != RespCommandId.CODE)
-            throw new IOException("readCommandId error"); //TODO
+            throw new IOException("The object symbol doesn't match the id symbol");
         byte[] byteId = readToCRLF(pushbackInputStream);
         if (byteId.length != 4)
-            throw new IOException("readCommandId error"); //TODO
+            throw new IOException("Invalid command id object");
         ByteBuffer bb = ByteBuffer.wrap(byteId);
         return new RespCommandId(bb.getInt());
     }
-
 
     @Override
     public void close() throws IOException {
@@ -137,7 +136,7 @@ public class RespReader implements AutoCloseable {
         try {
             byte b = (byte) pushbackInputStream.read();
             if (b == -1) {
-                throw new EOFException("getNextByte in respReader error"); //TODO
+                throw new EOFException("Unexpected end of stream");
             }
             pushbackInputStream.unread(b);
             return b;
@@ -146,7 +145,7 @@ public class RespReader implements AutoCloseable {
             throw e;
         }
         catch (IOException e) {
-            throw new IOException(e.getMessage());
+            throw new IOException("Error reading the following character", e);
         }
     }
 
@@ -156,7 +155,7 @@ public class RespReader implements AutoCloseable {
             byte b = (byte) is.read();
             while (true) {
                 if (b == -1)
-                    throw new EOFException("readToCrLF error"); //TODO
+                    throw new EOFException("Unexpected end of stream");
                 if (b != CR) {
                     message.add(b);
                     b = (byte) is.read();
@@ -179,7 +178,7 @@ public class RespReader implements AutoCloseable {
             throw e;
         }
         catch (IOException e) {
-            throw new IOException("readToCrLf error", e); //TODO
+            throw new IOException("Error reading the object", e);
         }
     }
 }

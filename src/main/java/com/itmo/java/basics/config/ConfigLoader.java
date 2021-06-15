@@ -1,10 +1,8 @@
 package com.itmo.java.basics.config;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
+
 import java.util.Properties;
 
 /**

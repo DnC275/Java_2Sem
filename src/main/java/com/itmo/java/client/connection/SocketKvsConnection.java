@@ -8,7 +8,6 @@ import com.itmo.java.protocol.model.RespObject;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 /**
  * С помощью {@link RespWriter} и {@link RespReader} читает/пишет в сокет
@@ -19,9 +18,6 @@ public class SocketKvsConnection implements KvsConnection {
     private final RespReader reader;
     private final RespWriter writer;
 
-//    InputStream is;
-//    OutputStream os;
-
     public SocketKvsConnection(ConnectionConfig config) {
         this.connectionConfig = config;
         try {
@@ -30,8 +26,7 @@ public class SocketKvsConnection implements KvsConnection {
             writer = new RespWriter(clientSocket.getOutputStream());
         }
         catch (IOException e) {
-//            close();
-            throw new RuntimeException("Errors with socket kvs connectioрилриn");
+            throw new RuntimeException("Error creating socket connection");
         }
     }
 
@@ -48,7 +43,7 @@ public class SocketKvsConnection implements KvsConnection {
             writer.write(command);
         }
         catch (IOException e) {
-            throw new ConnectionException("write error");
+            throw new ConnectionException("Error sending command");
         }
         try {
             object = reader.readObject();
@@ -70,7 +65,7 @@ public class SocketKvsConnection implements KvsConnection {
             clientSocket.close();
         }
         catch (IOException e) {
-            throw new RuntimeException("Error while closing connection");
+            throw new RuntimeException("Error closing socket connection");
         }
     }
 }

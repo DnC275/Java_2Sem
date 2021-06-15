@@ -8,21 +8,15 @@ import com.itmo.java.basics.console.DatabaseCommand;
 import com.itmo.java.basics.console.DatabaseCommandResult;
 import com.itmo.java.basics.console.ExecutionEnvironment;
 import com.itmo.java.basics.console.impl.ExecutionEnvironmentImpl;
-import com.itmo.java.basics.initialization.InitializationContext;
 import com.itmo.java.basics.initialization.impl.*;
-import com.itmo.java.basics.logic.Database;
 import com.itmo.java.basics.resp.CommandReader;
 import com.itmo.java.protocol.RespReader;
 import com.itmo.java.protocol.RespWriter;
-import com.itmo.java.protocol.model.RespObject;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -81,7 +75,6 @@ public class JavaSocketServerConnector implements Closeable {
         }
     }
 
-
     public static void main(String[] args) throws Exception {
         DatabaseServerInitializer databaseServerInitializer = new DatabaseServerInitializer(new DatabaseInitializer(new TableInitializer(new SegmentInitializer())));
         DatabaseServerConfig config = new ConfigLoader().readConfig();
@@ -99,7 +92,6 @@ public class JavaSocketServerConnector implements Closeable {
         private final DatabaseServer server;
         private final CommandReader commandReader;
         private final RespWriter writer;
-        
 
         /**
          * @param client клиентский сокет
@@ -128,6 +120,9 @@ public class JavaSocketServerConnector implements Closeable {
         public void run() {
             try {
                 while (!client.isClosed()) {
+                    if (!commandReader.hasNextCommand()) {
+                        throw new IOException("No command to read");
+                    }
                     DatabaseCommand command = commandReader.readCommand();
                     DatabaseCommandResult result = server.executeNextCommand(command).get();
                     writer.write(result.serialize());
