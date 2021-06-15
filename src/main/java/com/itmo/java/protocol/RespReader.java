@@ -132,16 +132,6 @@ public class RespReader implements AutoCloseable {
         byte[] byteId = readToCRLF();
         ByteBuffer bb = ByteBuffer.wrap(byteId);
         return new RespCommandId(bb.getInt());
-//        int ch1 = pushbackInputStream.read();
-//        int ch2 = pushbackInputStream.read();
-//        int ch3 = pushbackInputStream.read();
-//        int ch4 = pushbackInputStream.read();
-//        if ((ch1 | ch2 | ch3 | ch4) < 0)
-//            throw new EOFException();
-//        if (!checkLastBytes()){
-//            throw new IOException("Command id syntax error");
-//        }
-//        return new RespCommandId((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4));
     }
 
 
@@ -176,15 +166,17 @@ public class RespReader implements AutoCloseable {
         return result;
     }
 
-    private boolean checkLastBytes() throws IOException{
-        byte byte1 = (byte) pushbackInputStream.read();
-        byte byte2 = (byte) pushbackInputStream.read();
-        return (byte1 == CR) && (byte2 == LF);
-    }
-
     private byte getNextByte() throws IOException {
-        byte firstByte = (byte) pushbackInputStream.read();
-        pushbackInputStream.unread(firstByte);
-        return firstByte;
+        try {
+            byte firstByte = (byte) pushbackInputStream.read();
+            pushbackInputStream.unread(firstByte);
+            return firstByte;
+        }
+        catch (EOFException e) {
+            throw e;
+        }
+        catch (IOException e) {
+            throw new IOException("Error", e);
+        }
     }
 }
