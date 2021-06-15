@@ -83,18 +83,18 @@ public class RespReader implements AutoCloseable {
      * @throws IOException  при ошибке чтения
      */
     public RespBulkString readBulkString() throws IOException {
-        byte type = (byte) pushbackInputStream.read();
-        if (type != RespBulkString.CODE)
+        byte b = (byte) pushbackInputStream.read();
+        if (b != RespBulkString.CODE)
             throw new IOException("Bulk String syntax error");
-        int size = Integer.parseInt(new String(readToCRLF()));
-        if (size == -1){
+        int length = Integer.parseInt(new String(readToCRLF()));
+        if (length == -1)
             return RespBulkString.NULL_STRING;
-        }
-        byte[] data = pushbackInputStream.readNBytes(size);
-        if (!checkLastBytes()){
+        byte[] message = pushbackInputStream.readNBytes(length);
+        byte cr = (byte) pushbackInputStream.read();
+        byte lf = (byte) pushbackInputStream.read();
+        if (cr != CR || lf != LF)
             throw new IOException("Bulk String syntax error");
-        }
-        return new RespBulkString(data);
+        return new RespBulkString(message);
     }
 
     /**
@@ -104,18 +104,18 @@ public class RespReader implements AutoCloseable {
      * @throws IOException  при ошибке чтения
      */
     public RespArray readArray() throws IOException {
-        byte type = (byte) pushbackInputStream.read();
-        if (type != RespArray.CODE)
+        byte b = (byte) pushbackInputStream.read();
+        if (b != RespArray.CODE)
             throw new IOException("Array syntax error");
-        int size = Integer.parseInt(new String(readToCRLF(), StandardCharsets.UTF_8));
-        if (size < 1) {
+        int count = Integer.parseInt(new String(readToCRLF(), StandardCharsets.UTF_8));
+        if (count < 1) {
             throw new IOException("");
         }
-        RespObject[] objectList = new RespObject[size];
-        for (int i = 0; i < size; i++){
-            objectList[i] = readObject();
+        RespObject[] objects = new RespObject[count];
+        for (int i = 0; i < count; i++){
+            objects[i] = readObject();
         }
-        return new RespArray(objectList);
+        return new RespArray(objects);
     }
 
     /**
