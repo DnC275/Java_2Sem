@@ -8,6 +8,7 @@ import com.itmo.java.protocol.model.RespObject;
 
 import java.io.*;
 import java.lang.reflect.Array;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -125,19 +126,22 @@ public class RespReader implements AutoCloseable {
      * @throws IOException  при ошибке чтения
      */
     public RespCommandId readCommandId() throws IOException {
-        byte type = (byte) pushbackInputStream.read();
-        if (type != RespCommandId.CODE)
+        byte b = (byte) pushbackInputStream.read();
+        if (b != RespCommandId.CODE)
             throw new IOException("Command id syntax error");
-        int ch1 = pushbackInputStream.read();
-        int ch2 = pushbackInputStream.read();
-        int ch3 = pushbackInputStream.read();
-        int ch4 = pushbackInputStream.read();
-        if ((ch1 | ch2 | ch3 | ch4) < 0)
-            throw new EOFException();
-        if (!checkLastBytes()){
-            throw new IOException("Command id syntax error");
-        }
-        return new RespCommandId((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4));
+        byte[] byteId = readToCRLF();
+        ByteBuffer bb = ByteBuffer.wrap(byteId);
+        return new RespCommandId(bb.getInt());
+//        int ch1 = pushbackInputStream.read();
+//        int ch2 = pushbackInputStream.read();
+//        int ch3 = pushbackInputStream.read();
+//        int ch4 = pushbackInputStream.read();
+//        if ((ch1 | ch2 | ch3 | ch4) < 0)
+//            throw new EOFException();
+//        if (!checkLastBytes()){
+//            throw new IOException("Command id syntax error");
+//        }
+//        return new RespCommandId((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4));
     }
 
 
