@@ -141,29 +141,36 @@ public class RespReader implements AutoCloseable {
     }
 
     private byte[] readToCRLF() throws IOException {
-        List<Byte> message = new ArrayList<>();
-        byte b = (byte) pushbackInputStream.read();
-        while (true) {
-            if (b == -1) {
-                throw new IOException("Unexpected end of stream");
-            }
-            if (b != CR) {
-                message.add(b);
-                b = (byte) pushbackInputStream.read();
-            }
-            else {
-                b = (byte) pushbackInputStream.read();
-                if (b == LF) {
-                    break;
+        try {
+            List<Byte> message = new ArrayList<>();
+            byte b = (byte) pushbackInputStream.read();
+            while (true) {
+                if (b == -1) {
+                    throw new IOException("Unexpected end of stream");
                 }
-                message.add(b);
+                if (b != CR) {
+                    message.add(b);
+                    b = (byte) pushbackInputStream.read();
+                } else {
+                    b = (byte) pushbackInputStream.read();
+                    if (b == LF) {
+                        break;
+                    }
+                    message.add(b);
+                }
             }
+            byte[] result = new byte[message.size()];
+            int i = 0;
+            for (Byte character : message)
+                result[i++] = character;
+            return result;
         }
-        byte[] result = new byte[message.size()];
-        int i = 0;
-        for (Byte character : message)
-            result[i++] = character;
-        return result;
+        catch (EOFException e) {
+            throw e;
+        }
+        catch (IOException e) {
+            throw new IOException("Error", e);
+        }
     }
 
     private byte getNextByte() throws IOException {
